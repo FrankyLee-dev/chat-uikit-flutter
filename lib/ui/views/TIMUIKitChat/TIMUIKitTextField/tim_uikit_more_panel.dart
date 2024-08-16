@@ -339,7 +339,6 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
 
     await plugin.getVideoThumbnail(
       srcFile: originFile.path,
-      keepAspectRatio: true,
       destFile: tempPath,
       format: 'jpeg',
       width: 128,

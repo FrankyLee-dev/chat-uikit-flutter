@@ -1,4 +1,3 @@
-
 import 'package:azlistview_all_platforms/azlistview_all_platforms.dart';
 import 'package:flutter/material.dart';
 import 'package:lpinyin/lpinyin.dart';
@@ -18,7 +17,7 @@ class ContactList extends StatefulWidget {
   final bool isCanSelectMemberItem;
   final bool isCanSlidableDelete;
   final Function(List<V2TimFriendInfo> selectedMember)?
-      onSelectedMemberItemChange;
+  onSelectedMemberItemChange;
   final Function()? handleSlidableDelte;
   final Color? bgColor;
 
@@ -68,7 +67,7 @@ class ContactList extends StatefulWidget {
 class _ContactListState extends TIMUIKitState<ContactList> {
   List<V2TimFriendInfo> selectedMember = [];
   final TUIFriendShipViewModel friendShipViewModel =
-      serviceLocator<TUIFriendShipViewModel>();
+  serviceLocator<TUIFriendShipViewModel>();
 
   _getShowName(V2TimFriendInfo item) {
     final friendRemark = item.friendRemark ?? "";
@@ -109,84 +108,137 @@ class _ContactListState extends TIMUIKitState<ContactList> {
     final showName = _getShowName(item);
     final faceUrl = item.userProfile?.faceUrl ?? "";
 
+    final userCustomInfo = item?.userProfile?.customInfo;
+    final lCountry = userCustomInfo?['LCountry'];
+    final lCity = userCustomInfo?['LCity'];
+    debugPrint("_buildItem: $lCountry, $lCity");
+
     final V2TimUserStatus? onlineStatus = widget.isShowOnlineStatus
         ? friendShipViewModel.userStatusList.firstWhere(
             (element) => element.userID == item.userID,
-            orElse: () => V2TimUserStatus(statusType: 0))
+        orElse: () => V2TimUserStatus(statusType: 0))
         : null;
 
     bool disabled = false;
     if (widget.groupMemberList != null && widget.groupMemberList!.isNotEmpty) {
       disabled = ((widget.groupMemberList
-                  ?.indexWhere((element) => element?.userID == item.userID)) ??
-              -1) >
+          ?.indexWhere((element) => element?.userID == item.userID)) ??
+          -1) >
           -1;
     }
 
-    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) == DeviceType.Desktop;
+    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) ==
+        DeviceType.Desktop;
 
-    return Container(
-      padding: const EdgeInsets.only(top: 8, left: 16, right: 12),
-      decoration: BoxDecoration(
-          border: Border(
-              bottom: BorderSide(
-                  color:
-                      theme.weakDividerColor ?? CommonColor.weakDividerColor))),
-      child: Row(
-        children: [
-          if (widget.isCanSelectMemberItem)
-            Container(
-              margin: const EdgeInsets.only(right: 12, bottom: 8),
-              child: CheckBoxButton(
-                disabled: disabled,
-                isChecked: selectedMember.contains(item),
-                onChanged: (isChecked) {
-                  if (isChecked) {
-                    if (selectedMemberIsOverFlow()) {
-                      selectedMember = [item];
+    return Column(
+      children: [
+        Container(
+          color: Color(0xFFFEFEFE),
+          padding: const EdgeInsets.only(top: 8, left: 16, right: 12),
+          child: Row(
+            children: [
+              if (widget.isCanSelectMemberItem)
+                Container(
+                  margin: const EdgeInsets.only(right: 12, bottom: 8),
+                  child: CheckBoxButton(
+                    disabled: disabled,
+                    isChecked: selectedMember.contains(item),
+                    onChanged: (isChecked) {
+                      if (isChecked) {
+                        if (selectedMemberIsOverFlow()) {
+                          selectedMember = [item];
+                          setState(() {});
+                          return;
+                        }
+                        selectedMember.add(item);
+                      } else {
+                        selectedMember.remove(item);
+                      }
+                      if (widget.onSelectedMemberItemChange != null) {
+                        widget.onSelectedMemberItemChange!(selectedMember);
+                      }
                       setState(() {});
-                      return;
-                    }
-                    selectedMember.add(item);
-                  } else {
-                    selectedMember.remove(item);
-                  }
-                  if (widget.onSelectedMemberItemChange != null) {
-                    widget.onSelectedMemberItemChange!(selectedMember);
-                  }
-                  setState(() {});
-                },
+                    },
+                  ),
+                ),
+              Container(
+                padding: const EdgeInsets.only(bottom: 12),
+                margin: const EdgeInsets.only(right: 12),
+                child: SizedBox(
+                  height: isDesktopScreen ? 30 : 40,
+                  width: isDesktopScreen ? 30 : 40,
+                  child: Avatar(
+                      onlineStatus: onlineStatus,
+                      faceUrl: faceUrl,
+                      showName: showName),
+                ),
               ),
-            ),
-          Container(
-            padding: const EdgeInsets.only(bottom: 12),
-            margin: const EdgeInsets.only(right: 12),
-            child: SizedBox(
-              height: isDesktopScreen ? 30 : 40,
-              width: isDesktopScreen ? 30 : 40,
-              child: Avatar(
-                  onlineStatus: onlineStatus,
-                  faceUrl: faceUrl,
-                  showName: showName),
-            ),
+              Expanded(
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    padding: EdgeInsets.only(
+                        top: lCountry != null && lCity != null ? 0 : 10,
+                        bottom: 20,
+                        right: 28),
+                    child: Text(
+                      showName,
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: isDesktopScreen ? 14 : 15),
+                    ),
+                  )),
+              if (lCountry != null && lCity != null)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      children: [
+                        Image.network(
+                          "https://alicdn.msmds.cn/GemNeary/dingwei_icon.png",
+                          width: 10, height: 13, errorBuilder: (context, o, s) {
+                          return Container();
+                        },),
+                        SizedBox(width: 3,),
+                        Text(TIM_t("最近登录"),
+                          style: TextStyle(
+                            fontSize: 9, color: Color(0xFFB9BFCB),),)
+                      ],
+                    ),
+                    SizedBox(height: 5,),
+                    Text("$lCountry-$lCity",
+                      style: TextStyle(
+                        fontSize: 9, color: Color(0xFFAFB5C0),),),
+                  ],
+                )
+            ],
           ),
-          Expanded(
-              child: Container(
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.only(top: 10, bottom: 20, right: 28),
-            child: Text(
-              showName,
-              style: TextStyle(
-                  color: Colors.black, fontSize: isDesktopScreen ? 14 : 18),
-            ),
-          )),
-        ],
+        ),
+        Divider(color: Color(0xFFE8E8E8), height: 0.8,indent: isDesktopScreen ? 58 : 68,),
+      ],
+    );
+  }
+
+  Widget getSusItem(BuildContext context, String tag) {
+    return Container(
+      height: 34,
+      width: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.only(left: 18),
+      color: Color(0xFFF7F7F7),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        tag,
+        softWrap: false,
+        style: TextStyle(
+          fontSize: 12,
+          color: Color(0xFF999999),
+        ),
       ),
     );
   }
 
   Widget generateTopItem(memberInfo) {
-    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) == DeviceType.Desktop;
+    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) ==
+        DeviceType.Desktop;
     if (widget.topListItemBuilder != null) {
       final customWidget = widget.topListItemBuilder!(memberInfo);
       if (customWidget != null) {
@@ -213,29 +265,29 @@ class _ContactListState extends TIMUIKitState<ContactList> {
               ),
               Expanded(
                   child: Container(
-                padding: const EdgeInsets.only(top: 10, bottom: 20),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      memberInfo.name,
-                      style: TextStyle(
-                          color: hexToColor("111111"),
-                          fontSize: isDesktopScreen ? 14 : 18),
+                    padding: const EdgeInsets.only(top: 10, bottom: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          memberInfo.name,
+                          style: TextStyle(
+                              color: hexToColor("111111"),
+                              fontSize: isDesktopScreen ? 14 : 18),
+                        ),
+                        Expanded(child: Container()),
+                        // if (item.id == "newContact")
+                        //   const TIMUIKitUnreadCount(),
+                        Container(
+                          margin: const EdgeInsets.only(right: 16),
+                          child: Icon(
+                            Icons.keyboard_arrow_right,
+                            color: hexToColor('BBBBBB'),
+                          ),
+                        )
+                      ],
                     ),
-                    Expanded(child: Container()),
-                    // if (item.id == "newContact")
-                    //   const TIMUIKitUnreadCount(),
-                    Container(
-                      margin: const EdgeInsets.only(right: 16),
-                      child: Icon(
-                        Icons.keyboard_arrow_right,
-                        color: hexToColor('BBBBBB'),
-                      ),
-                    )
-                  ],
-                ),
-              ))
+                  ))
             ],
           ),
         ));
@@ -246,7 +298,8 @@ class _ContactListState extends TIMUIKitState<ContactList> {
     final TUITheme theme = value.theme;
 
     final showList = _getShowList(widget.contactList);
-    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) == DeviceType.Desktop;
+    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) ==
+        DeviceType.Desktop;
 
     if (widget.topList != null && widget.topList!.isNotEmpty) {
       final topList = widget.topList!
@@ -269,6 +322,13 @@ class _ContactListState extends TIMUIKitState<ContactList> {
 
     return AZListViewContainer(
       memberList: showList,
+      susItemBuilder: (BuildContext context, int index) {
+        var model = showList[index];
+        if (model.getSuspensionTag() == "@") {
+          return Container();
+        }
+        return getSusItem(context, model.getSuspensionTag());
+      },
       itemBuilder: (context, index) {
         final memberInfo = showList[index].memberInfo;
         if (memberInfo is TopListItem) {
@@ -277,8 +337,8 @@ class _ContactListState extends TIMUIKitState<ContactList> {
           return Material(
             color: (isDesktopScreen)
                 ? (widget.currentItem == memberInfo.userProfile.userID
-                    ? theme.conversationItemChooseBgColor
-                    : widget.bgColor)
+                ? theme.conversationItemChooseBgColor
+                : widget.bgColor)
                 : null,
             child: InkWell(
               onTap: () {

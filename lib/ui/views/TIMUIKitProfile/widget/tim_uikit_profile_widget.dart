@@ -304,7 +304,7 @@ class TIMUIKitProfileWidget extends TIMUIKitClass {
               border:
                   Border(bottom: BorderSide(color: theme.weakDividerColor))),
           child: Text(
-            TIM_t("清除好友"),
+            TIM_t("删除好友"),
             style: TextStyle(color: theme.cautionColor, fontSize: 17),
           ),
         ),
@@ -324,7 +324,7 @@ class TIMUIKitProfileWidget extends TIMUIKitClass {
         child: Row(children: [
           Expanded(
             child: TextButton(
-                child: Text(TIM_t("加为好友"),
+                child: Text(TIM_t("添加到通讯录"),
                     style: TextStyle(color: theme.primaryColor, fontSize: 17)),
                 onPressed: () {
                   handleAddFriend();
