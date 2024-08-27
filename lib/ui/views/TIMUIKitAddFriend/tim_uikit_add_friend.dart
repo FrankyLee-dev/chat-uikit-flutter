@@ -27,6 +27,8 @@ class TIMUIKitAddFriend extends StatefulWidget {
   /// The callback function to close the widget upon completion by the parent component.
   final VoidCallback? closeFunc;
 
+  final Widget? scannerWidget;
+
   final Function(
       AddFriendLifeCycle? lifeCycle,
       bool? isShowDefaultGroup,
@@ -37,6 +39,7 @@ class TIMUIKitAddFriend extends StatefulWidget {
     this.isShowDefaultGroup = false,
     this.lifeCycle,
     required this.onTapAlreadyFriendsItem,
+    this.scannerWidget,
     this.onTap,
     this.closeFunc})
       : super(key: key);
@@ -226,59 +229,72 @@ class _TIMUIKitAddFriendState extends TIMUIKitState<TIMUIKitAddFriend> {
       builder: (BuildContext context, Widget? w) {
         return Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              child: Row(
-                children: [
-                  Expanded(
-                      child: TextField(
-                        autofocus: true,
-                        focusNode: _focusNode,
-                        controller: _controller,
-                        onChanged: (value) {
-                          if (value
-                              .trim()
-                              .isEmpty) {
-                            setState(() {
-                              showResult = false;
-                            });
-                          }
-                        },
-                        textInputAction: TextInputAction.search,
-                        onSubmitted: (_) {
-                          final searchParams = _controller.text;
-                          if (searchParams
-                              .trim()
-                              .isNotEmpty) {
-                            searchFriend(searchParams);
-                            showResult = true;
-                            _focusNode.requestFocus();
-                            setState(() {});
-                          }
-                        },
-                        decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.search_outlined,
-                              color: theme.weakTextColor,
+            Column(
+              children: [
+                Container(
+                  color: Color(0xFFEDEDED),
+                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 14),
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(4),
                             ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(
-                                width: 0,
-                                style: BorderStyle.none,
-                              ),
+                            child: TextField(
+                              autofocus: true,
+                              focusNode: _focusNode,
+                              controller: _controller,
+                              onChanged: (value) {
+                                if (value
+                                    .trim()
+                                    .isEmpty) {
+                                  setState(() {
+                                    showResult = false;
+                                  });
+                                }
+                              },
+                              textInputAction: TextInputAction.search,
+                              onSubmitted: (_) {
+                                final searchParams = _controller.text;
+                                if (searchParams
+                                    .trim()
+                                    .isNotEmpty) {
+                                  searchFriend(searchParams);
+                                  showResult = true;
+                                  _focusNode.requestFocus();
+                                  setState(() {});
+                                }
+                              },
+                              decoration: InputDecoration(
+                                  prefixIcon: Icon(
+                                    Icons.search_outlined,
+                                    color: theme.weakTextColor,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: const BorderSide(
+                                      width: 0,
+                                      style: BorderStyle.none,
+                                    ),
+                                  ),
+                                  contentPadding: EdgeInsets.zero,
+                                  hintStyle: TextStyle(
+                                    color: theme.weakTextColor,
+                                  ),
+                                  // fillColor: theme.inputFillColor,
+                                  // filled: true,
+                                  hintText: TIM_t("请输入账号ID")),
                             ),
-                            contentPadding: EdgeInsets.zero,
-                            hintStyle: TextStyle(
-                              color: theme.weakTextColor,
-                            ),
-                            fillColor: theme.inputFillColor,
-                            filled: true,
-                            hintText: TIM_t("搜索用户 ID")),
-                      )),
-                ],
-              ),
-            ),
+                          )),
+                    ],
+                  ),
+                ),
+                widget.scannerWidget ?? SizedBox(),
+              ],
+            )
+            ,
             if (showResult)
               Expanded(
                 child: Container(

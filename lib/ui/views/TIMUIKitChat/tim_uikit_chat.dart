@@ -549,7 +549,8 @@ class _TUIChatState extends TIMUIKitState<TIMUIKitChat> {
                             selector: (c, model) {
                               return model.isMultiSelect;
                             },
-                          )
+                          ),
+
                         ],
                       ),
                       if (_dragging)

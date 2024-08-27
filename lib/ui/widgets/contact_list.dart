@@ -111,7 +111,6 @@ class _ContactListState extends TIMUIKitState<ContactList> {
     final userCustomInfo = item?.userProfile?.customInfo;
     final lCountry = userCustomInfo?['LCountry'];
     final lCity = userCustomInfo?['LCity'];
-    debugPrint("_buildItem: $lCountry, $lCity");
 
     final V2TimUserStatus? onlineStatus = widget.isShowOnlineStatus
         ? friendShipViewModel.userStatusList.firstWhere(
@@ -134,7 +133,7 @@ class _ContactListState extends TIMUIKitState<ContactList> {
       children: [
         Container(
           color: Color(0xFFFEFEFE),
-          padding: const EdgeInsets.only(top: 8, left: 16, right: 12),
+          padding: const EdgeInsets.only(top: 8, left: 16, right: 25),
           child: Row(
             children: [
               if (widget.isCanSelectMemberItem)

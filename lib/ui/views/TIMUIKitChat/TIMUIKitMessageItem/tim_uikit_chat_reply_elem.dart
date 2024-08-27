@@ -126,14 +126,12 @@ class _TIMUIKitReplyElemState extends TIMUIKitState<TIMUIKitReplyElem> {
   }
 
   Widget _defaultRawMessageText(String text, TUITheme? theme) {
-    final isFromSelf = widget.message.isSelf ?? true;
     return Text(text,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(
             fontSize: 12,
-            color: isFromSelf ? Colors.white.withAlpha(180) : hexToColor(
-                "616669"),
+            color: theme?.weakTextColor,
             fontWeight: FontWeight.w400));
   }
 
@@ -425,7 +423,6 @@ class _TIMUIKitReplyElemState extends TIMUIKitState<TIMUIKitReplyElem> {
                         : "",
                     style: TextStyle(
                         fontSize: 12,
-                        color: isFromSelf ? Colors.white : Colors.black,
                         fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(
@@ -443,14 +440,12 @@ class _TIMUIKitReplyElemState extends TIMUIKitState<TIMUIKitReplyElem> {
             widget.chatModel.chatConfig.urlPreviewType != UrlPreviewType.none
                 ? textWithLink!(
                 style: TextStyle(
-                    color: isFromSelf ? Colors.white : Colors.black,
                     fontSize: isDesktopScreen ? 14 : 16,
                     textBaseline: TextBaseline.ideographic,
                     height: widget.chatModel.chatConfig.textHeight))
                 : ExtendedText(widget.message.textElem?.text ?? "",
                 softWrap: true,
                 style: TextStyle(
-                    color: isFromSelf ? Colors.white : Colors.black,
                     fontSize: isDesktopScreen ? 14 : 16,
                     height: widget.chatModel.chatConfig.textHeight),
                 specialTextSpanBuilder: DefaultSpecialTextSpanBuilder(

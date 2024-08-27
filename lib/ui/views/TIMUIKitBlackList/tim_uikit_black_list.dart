@@ -120,7 +120,7 @@ class _TIMUIKitBlackListState extends TIMUIKitState<TIMUIKitBlackList> {
               },
               backgroundColor: theme.cautionColor ?? CommonColor.cautionColor,
               foregroundColor: theme.white,
-              label: TIM_t("删除"),
+              label: TIM_t("移出黑名单"),
               autoClose: true,
             )
           ]),
