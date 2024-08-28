@@ -13,12 +13,11 @@ class AZListViewContainer extends StatefulWidget {
   final Widget Function(BuildContext context, int index)? susItemBuilder;
   final bool isShowIndexBar;
 
-  const AZListViewContainer(
-      {Key? key,
-      required this.memberList,
-      required this.itemBuilder,
-      this.isShowIndexBar = true,
-      this.susItemBuilder})
+  const AZListViewContainer({Key? key,
+    required this.memberList,
+    required this.itemBuilder,
+    this.isShowIndexBar = true,
+    this.susItemBuilder})
       : super(key: key);
 
   @override
@@ -39,10 +38,15 @@ class _AZListViewContainerState extends TIMUIKitState<AZListViewContainer> {
 
   static Widget getSusItem(BuildContext context, String tag,
       {double susHeight = 40}) {
-    final theme = Provider.of<TUIThemeViewModel>(context).theme;
+    final theme = Provider
+        .of<TUIThemeViewModel>(context)
+        .theme;
     return Container(
       height: susHeight,
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
       padding: const EdgeInsets.only(left: 16.0),
       color: theme.weakDividerColor,
       alignment: Alignment.centerLeft,
@@ -80,27 +84,33 @@ class _AZListViewContainerState extends TIMUIKitState<AZListViewContainer> {
     return ChangeNotifierProvider.value(
         value: serviceLocator<TUIThemeViewModel>(),
         child: Consumer<TUIThemeViewModel>(
-            builder: (context, tuiTheme, child) => AzListView(
-                physics: const BouncingScrollPhysics(
-                    parent: AlwaysScrollableScrollPhysics()),
-                data: _list!,
-                itemCount: _list!.length,
-                itemBuilder: widget.itemBuilder,
-                indexBarData: (!isDesktopScreen && widget.isShowIndexBar)
-                    ? SuspensionUtil.getTagIndexList(_list!)
-                    .where((element) => element != "@")
-                    .toList()
-                    : [],
-                susItemBuilder: (BuildContext context, int index) {
-                  if (widget.susItemBuilder != null) {
-                    return widget.susItemBuilder!(context, index);
-                  }
-                  ISuspensionBeanImpl model = _list![index];
-                  if (model.getSuspensionTag() == "@") {
-                    return Container();
-                  }
-                  return getSusItem(context, model.getSuspensionTag());
-                })));
+            builder: (context, tuiTheme, child) =>
+                AzListView(
+                    physics: const BouncingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics()),
+                    data: _list!,
+                    itemCount: _list!.length,
+                    itemBuilder: widget.itemBuilder,
+                    indexBarData: (!isDesktopScreen && widget.isShowIndexBar)
+                        ? kIndexBarData
+                        .where((element) => element != "@")
+                        .toList()
+                        : [],
+                    indexBarWidth: 9,
+                    indexBarMargin: EdgeInsets.only(right: 5),
+                    indexBarItemHeight: 13,
+                    indexBarOptions: IndexBarOptions(textStyle: TextStyle(
+                      fontSize: 9, color: Color(0xFF333333),),),
+                    susItemBuilder: (BuildContext context, int index) {
+                      if (widget.susItemBuilder != null) {
+                        return widget.susItemBuilder!(context, index);
+                      }
+                      ISuspensionBeanImpl model = _list![index];
+                      if (model.getSuspensionTag() == "@") {
+                        return Container();
+                      }
+                      return getSusItem(context, model.getSuspensionTag());
+                    })));
   }
 }
 
