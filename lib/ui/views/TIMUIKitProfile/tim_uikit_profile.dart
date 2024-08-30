@@ -43,7 +43,7 @@ class TIMUIKitProfile extends StatefulWidget {
   /// This widget will no longer shows the personal info card and can not jump to personal info page automatically,
   /// please navigate to your custom personal info page manually and directly, you may refer to our demo.
   final void Function(BuildContext context, V2TimUserFullInfo? userFullInfo)?
-      handleProfileDetailCardTap;
+  handleProfileDetailCardTap;
 
   /// Profile Controller
   final TIMUIKitProfileController? controller;
@@ -83,31 +83,25 @@ class TIMUIKitProfile extends StatefulWidget {
   /// Whether use the small card mode on Desktop. Usually shows on the Chat page.
   final bool smallCardMode;
 
-  const TIMUIKitProfile(
-      {Key? key,
-      required this.userID,
-      @Deprecated(
-          "[operationListBuilder] and [bottomOperationBuilder] merged into [builder], please use it instead")
-      this.operationListBuilder,
-      @Deprecated(
-          "[operationListBuilder] and [bottomOperationBuilder] merged into [builder], please use it instead")
-      this.bottomOperationBuilder,
-      @Deprecated(
-          "This widget will no longer shows the personal info card and can not jump to personal info page automatically, please navigate to your custom personal info page manually and directly, you may refer to our demo")
-      this.handleProfileDetailCardTap,
-      @Deprecated(
-          "This widget will no longer shows the personal info card and can not jump to personal info page automatically, please navigate to your custom personal info page manually and directly, you may refer to our demo")
-      this.canJumpToPersonalProfile = false,
-      @Deprecated(
-          "This widget will no longer shows the personal info card and will not support to change self avatar, please navigate to your custom personal info page manually and directly, you may refer to our demo")
-      this.onSelfAvatarTap,
-      this.controller,
-      this.profileWidgetBuilder,
-      this.profileWidgetsOrder,
-      this.builder,
-      this.isSelf = false,
-      this.lifeCycle,
-      this.smallCardMode = false})
+  const TIMUIKitProfile({Key? key,
+    required this.userID,
+    @Deprecated(
+        "[operationListBuilder] and [bottomOperationBuilder] merged into [builder], please use it instead") this.operationListBuilder,
+    @Deprecated(
+        "[operationListBuilder] and [bottomOperationBuilder] merged into [builder], please use it instead") this.bottomOperationBuilder,
+    @Deprecated(
+        "This widget will no longer shows the personal info card and can not jump to personal info page automatically, please navigate to your custom personal info page manually and directly, you may refer to our demo") this.handleProfileDetailCardTap,
+    @Deprecated(
+        "This widget will no longer shows the personal info card and can not jump to personal info page automatically, please navigate to your custom personal info page manually and directly, you may refer to our demo") this.canJumpToPersonalProfile = false,
+    @Deprecated(
+        "This widget will no longer shows the personal info card and will not support to change self avatar, please navigate to your custom personal info page manually and directly, you may refer to our demo") this.onSelfAvatarTap,
+    this.controller,
+    this.profileWidgetBuilder,
+    this.profileWidgetsOrder,
+    this.builder,
+    this.isSelf = false,
+    this.lifeCycle,
+    this.smallCardMode = false})
       : super(key: key);
 
   @override
@@ -165,7 +159,7 @@ class _TIMUIKitProfileState extends TIMUIKitState<TIMUIKitProfile> {
       child: Consumer<TUIProfileViewModel>(
         builder: (context, value, child) {
           final TUIProfileViewModel model =
-              Provider.of<TUIProfileViewModel>(context);
+          Provider.of<TUIProfileViewModel>(context);
           _controller.model = model;
           final V2TimFriendInfo? userInfo = model.userProfile?.friendInfo;
 
@@ -185,12 +179,12 @@ class _TIMUIKitProfileState extends TIMUIKitState<TIMUIKitProfile> {
                   userID: widget.userID,
                   faceUrl: model.userProfile?.friendInfo?.userProfile?.faceUrl,
                   showName: TencentUtils.checkString(
-                          model.userProfile?.friendInfo?.friendRemark) ??
+                      model.userProfile?.friendInfo?.friendRemark) ??
                       TencentUtils.checkString(model
                           .userProfile?.friendInfo?.userProfile?.nickName) ??
                       widget.userID);
           final TUISelfInfoViewModel _selfInfoViewModel =
-              serviceLocator<TUISelfInfoViewModel>();
+          serviceLocator<TUISelfInfoViewModel>();
 
           final isFriend = model.friendType != 0;
           final isSelf = (model.userProfile?.friendInfo?.userID ==
@@ -231,7 +225,7 @@ class _TIMUIKitProfileState extends TIMUIKitState<TIMUIKitProfile> {
                 tips: TIM_t("仅限汉字、英文、数字和下划线"),
                 onSubmitted: (String remark) async {
                   final res =
-                      await _controller.updateRemarks(widget.userID, remark);
+                  await _controller.updateRemarks(widget.userID, remark);
                   if (res.code == 0) {
                     widget.lifeCycle?.didRemarkUpdated(remark);
                   }
@@ -240,6 +234,11 @@ class _TIMUIKitProfileState extends TIMUIKitState<TIMUIKitProfile> {
           }
 
           void handleAddFriend() async {
+            var shouldAddFriend = await widget.lifeCycle?.shouldAddFriend(
+                userInfo.userID);
+            if (shouldAddFriend == true) {
+              return;
+            }
             model.addFriend(userInfo.userID).then((res) {
               if (res == null) {
                 throw Error();
@@ -296,170 +295,175 @@ class _TIMUIKitProfileState extends TIMUIKitState<TIMUIKitProfile> {
                   return (customBuilder?.userInfoCard != null
                       ? customBuilder?.userInfoCard!(userInfo.userProfile)
                       : TIMUIKitProfileUserInfoCard(
-                          userInfo: userInfo.userProfile))!;
+                      userInfo: userInfo.userProfile))!;
                 case ProfileWidgetEnum.addToBlockListBar:
                   if (isSelf) {
                     return Container();
                   }
                   return (customBuilder?.addToBlockListBar != null
                       ? customBuilder?.addToBlockListBar!(
-                          model.isAddToBlackList ?? false, handleAddToBlockList)
+                      model.isAddToBlackList ?? false, handleAddToBlockList)
                       : TIMUIKitProfileWidget.addToBlackListBar(
-                          model.isAddToBlackList ?? false,
-                          context,
-                          handleAddToBlockList,
-                          widget.smallCardMode))!;
+                      model.isAddToBlackList ?? false,
+                      context,
+                      handleAddToBlockList,
+                      widget.smallCardMode))!;
                 case ProfileWidgetEnum.pinConversationBar:
-                  // if (!isFriend) {
-                  //   return Container();
-                  // }
+                // if (!isFriend) {
+                //   return Container();
+                // }
                   return (customBuilder?.pinConversationBar != null
                       ? customBuilder?.pinConversationBar!(
-                          conversation.isPinned ?? false, handlePinConversation)
+                      conversation.isPinned ?? false, handlePinConversation)
                       : TIMUIKitProfileWidget.pinConversationBar(
-                          conversation.isPinned ?? false,
-                          context,
-                          handlePinConversation,
-                          widget.smallCardMode))!;
+                      conversation.isPinned ?? false,
+                      context,
+                      handlePinConversation,
+                      widget.smallCardMode))!;
                 case ProfileWidgetEnum.messageMute:
-                  // if (!isFriend) {
-                  //   return Container();
-                  // }
+                // if (!isFriend) {
+                //   return Container();
+                // }
                   return (customBuilder?.messageMute != null
                       ? customBuilder?.messageMute!(isMute, handleMuteMessage)
                       : TIMUIKitProfileWidget.messageDisturb(context, isMute,
-                          handleMuteMessage, widget.smallCardMode))!;
+                      handleMuteMessage, widget.smallCardMode))!;
                 case ProfileWidgetEnum.searchBar:
                   return (customBuilder?.searchBar != null
                       ? customBuilder?.searchBar!(conversation)
-                      // Please define the search bar with navigating in `profileWidgetBuilder` before using it here.
+                  // Please define the search bar with navigating in `profileWidgetBuilder` before using it here.
                       : Text(TIM_t("你必须自定义search bar，并处理点击跳转")))!;
                 case ProfileWidgetEnum.portraitBar:
                   return (customBuilder?.portraitBar != null
                       ? customBuilder?.portraitBar!(userInfo.userProfile)
                       : TIMUIKitProfileWidget.portraitBar(
-                          TIMUIKitProfileWidget.defaultPortraitWidget(
-                              userInfo.userProfile, widget.smallCardMode),
-                          widget.smallCardMode))!;
+                      TIMUIKitProfileWidget.defaultPortraitWidget(
+                          userInfo.userProfile, widget.smallCardMode),
+                      widget.smallCardMode))!;
                 case ProfileWidgetEnum.nicknameBar:
                   return (customBuilder?.nicknameBar != null
                       ? customBuilder
-                          ?.nicknameBar!(userInfo.userProfile?.nickName ?? "")
+                      ?.nicknameBar!(userInfo.userProfile?.nickName ?? "")
                       : TIMUIKitProfileWidget.nicknameBar(
-                          userInfo.userProfile?.nickName ?? "",
-                          widget.smallCardMode))!;
+                      userInfo.userProfile?.nickName ?? "",
+                      widget.smallCardMode))!;
                 case ProfileWidgetEnum.userAccountBar:
                   return (customBuilder?.userAccountBar != null
                       ? customBuilder
-                          ?.userAccountBar!(userInfo.userProfile?.userID ?? "")
+                      ?.userAccountBar!(userInfo.userProfile?.userID ?? "")
                       : TIMUIKitProfileWidget.userAccountBar(
-                          userInfo.userProfile?.userID ?? "",
-                          widget.smallCardMode))!;
+                      userInfo.userProfile?.userID ?? "",
+                      widget.smallCardMode))!;
                 case ProfileWidgetEnum.signatureBar:
                   return (customBuilder?.signatureBar != null
                       ? customBuilder?.signatureBar!(
-                          userInfo.userProfile?.selfSignature ?? "")
+                      userInfo.userProfile?.selfSignature ?? "")
                       : TIMUIKitProfileWidget.signatureBar(
-                          userInfo.userProfile?.selfSignature ?? "",
-                          widget.smallCardMode))!;
+                      userInfo.userProfile?.selfSignature ?? "",
+                      widget.smallCardMode))!;
                 case ProfileWidgetEnum.genderBar:
                   return (customBuilder?.genderBar != null
                       ? customBuilder
-                          ?.genderBar!(userInfo.userProfile?.gender ?? 0)
+                      ?.genderBar!(userInfo.userProfile?.gender ?? 0)
                       : TIMUIKitProfileWidget.genderBar(
-                          userInfo.userProfile?.gender ?? 0,
-                          widget.smallCardMode))!;
+                      userInfo.userProfile?.gender ?? 0,
+                      widget.smallCardMode))!;
                 case ProfileWidgetEnum.birthdayBar:
                   return (customBuilder?.birthdayBar != null
                       ? customBuilder
-                          ?.birthdayBar!(userInfo.userProfile?.birthday)
+                      ?.birthdayBar!(userInfo.userProfile?.birthday)
                       : TIMUIKitProfileWidget.birthdayBar(
-                          userInfo.userProfile?.birthday,
-                          widget.smallCardMode))!;
+                      userInfo.userProfile?.birthday,
+                      widget.smallCardMode))!;
                 case ProfileWidgetEnum.addAndDeleteArea:
                   if (isSelf) {
                     return Container();
                   }
                   return (customBuilder?.addAndDeleteArea != null
                       ? customBuilder?.addAndDeleteArea!(
-                          userInfo,
-                          conversation,
-                          value.friendType,
-                          isMute,
-                        )
+                    userInfo,
+                    conversation,
+                    value.friendType,
+                    isMute,
+                  )
                       : isDesktopScreen
-                          ? TIMUIKitProfileWidget.addAndDeleteAreaWide(
-                              userInfo,
-                              conversation,
-                              value.friendType,
-                              isMute,
-                              model.isAddToBlackList ?? false,
-                              theme,
-                              handleAddFriend,
-                              handleDeleteFriend,
-                              widget.smallCardMode)
-                          : TIMUIKitProfileWidget.addAndDeleteArea(
-                              userInfo,
-                              conversation,
-                              value.friendType,
-                              isMute,
-                              model.isAddToBlackList ?? false,
-                              theme,
-                              handleAddFriend,
-                              handleDeleteFriend,
-                              widget.smallCardMode))!;
+                      ? TIMUIKitProfileWidget.addAndDeleteAreaWide(
+                      userInfo,
+                      conversation,
+                      value.friendType,
+                      isMute,
+                      model.isAddToBlackList ?? false,
+                      theme,
+                      handleAddFriend,
+                      handleDeleteFriend,
+                      widget.smallCardMode)
+                      : TIMUIKitProfileWidget.addAndDeleteArea(
+                      userInfo,
+                      conversation,
+                      value.friendType,
+                      isMute,
+                      model.isAddToBlackList ?? false,
+                      theme,
+                      handleAddFriend,
+                      handleDeleteFriend,
+                      widget.smallCardMode))!;
                 case ProfileWidgetEnum.operationDivider:
                   return (customBuilder?.operationDivider != null
                       ? customBuilder?.operationDivider!()
                       : TIMUIKitProfileWidget.operationDivider(
-                          color: theme.weakDividerColor,
-                          height: isDesktopScreen ? 1 : 10,
-                          margin: isDesktopScreen
-                              ? EdgeInsets.symmetric(
-                                  vertical: widget.smallCardMode ? 4 : 20)
-                              : null))!;
+                      color: theme.weakDividerColor,
+                      height: isDesktopScreen ? 1 : 10,
+                      margin: isDesktopScreen
+                          ? EdgeInsets.symmetric(
+                          vertical: widget.smallCardMode ? 4 : 20)
+                          : null))!;
                 case ProfileWidgetEnum.remarkBar:
                   if (!isFriend) {
                     return Container();
                   }
                   return (customBuilder?.remarkBar != null
                       ? customBuilder?.remarkBar!(
-                          userInfo.friendRemark ?? "", handleTapRemarkBar)
+                      userInfo.friendRemark ?? "", handleTapRemarkBar)
                       : TIMUIKitProfileWidget.remarkBar(
-                          context,
-                          userInfo.friendRemark ?? "",
-                          handleTapRemarkBar,
-                          widget.smallCardMode))!;
+                      context,
+                      userInfo.friendRemark ?? "",
+                      handleTapRemarkBar,
+                      widget.smallCardMode))!;
                 case ProfileWidgetEnum.customBuilderOne:
                   return (customBuilder?.customBuilderOne != null
                       ? customBuilder?.customBuilderOne!(
-                          isFriend, userInfo, conversation)
-                      // Please define the corresponding custom widget in `profileWidgetBuilder` before using it here.
-                      : Text(TIM_t("如使用自定义区域，请在profileWidgetBuilder传入对应组件")))!;
+                      isFriend, userInfo, conversation)
+                  // Please define the corresponding custom widget in `profileWidgetBuilder` before using it here.
+                      : Text(TIM_t(
+                      "如使用自定义区域，请在profileWidgetBuilder传入对应组件")))!;
                 case ProfileWidgetEnum.customBuilderTwo:
                   return (customBuilder?.customBuilderTwo != null
                       ? customBuilder?.customBuilderTwo!(
-                          isFriend, userInfo, conversation)
-                      // Please define the corresponding custom widget in `profileWidgetBuilder` before using it here.
-                      : Text(TIM_t("如使用自定义区域，请在profileWidgetBuilder传入对应组件")))!;
+                      isFriend, userInfo, conversation)
+                  // Please define the corresponding custom widget in `profileWidgetBuilder` before using it here.
+                      : Text(TIM_t(
+                      "如使用自定义区域，请在profileWidgetBuilder传入对应组件")))!;
                 case ProfileWidgetEnum.customBuilderThree:
                   return (customBuilder?.customBuilderThree != null
                       ? customBuilder?.customBuilderThree!(
-                          isFriend, userInfo, conversation)
-                      // Please define the corresponding custom widget in `profileWidgetBuilder` before using it here.
-                      : Text(TIM_t("如使用自定义区域，请在profileWidgetBuilder传入对应组件")))!;
+                      isFriend, userInfo, conversation)
+                  // Please define the corresponding custom widget in `profileWidgetBuilder` before using it here.
+                      : Text(TIM_t(
+                      "如使用自定义区域，请在profileWidgetBuilder传入对应组件")))!;
                 case ProfileWidgetEnum.customBuilderFour:
                   return (customBuilder?.customBuilderFour != null
                       ? customBuilder?.customBuilderFour!(
-                          isFriend, userInfo, conversation)
-                      // Please define the corresponding custom widget in `profileWidgetBuilder` before using it here.
-                      : Text(TIM_t("如使用自定义区域，请在profileWidgetBuilder传入对应组件")))!;
+                      isFriend, userInfo, conversation)
+                  // Please define the corresponding custom widget in `profileWidgetBuilder` before using it here.
+                      : Text(TIM_t(
+                      "如使用自定义区域，请在profileWidgetBuilder传入对应组件")))!;
                 case ProfileWidgetEnum.customBuilderFive:
                   return (customBuilder?.customBuilderFive != null
                       ? customBuilder?.customBuilderFive!(
-                          isFriend, userInfo, conversation)
-                      // Please define the corresponding custom widget in `profileWidgetBuilder` before using it here.
-                      : Text(TIM_t("如使用自定义区域，请在profileWidgetBuilder传入对应组件")))!;
+                      isFriend, userInfo, conversation)
+                  // Please define the corresponding custom widget in `profileWidgetBuilder` before using it here.
+                      : Text(TIM_t(
+                      "如使用自定义区域，请在profileWidgetBuilder传入对应组件")))!;
 
                 default:
                   return Container();
@@ -481,8 +485,8 @@ class _TIMUIKitProfileState extends TIMUIKitState<TIMUIKitProfile> {
           } else {
             return profilePage(
                 child: Column(
-              children: [..._renderWidgetsWithOrder(_defaultWidgetOrder)],
-            ));
+                  children: [..._renderWidgetsWithOrder(_defaultWidgetOrder)],
+                ));
           }
         },
       ),

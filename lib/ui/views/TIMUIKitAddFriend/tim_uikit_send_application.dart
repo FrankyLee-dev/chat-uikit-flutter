@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tencent_cloud_chat_uikit/tencent_cloud_chat_uikit.dart';
 import 'package:tencent_cloud_chat_uikit/ui/utils/screen_utils.dart';
 import 'package:tencent_cloud_chat_uikit/base_widgets/tim_ui_kit_state.dart';
@@ -38,7 +39,7 @@ class _SendApplicationState extends TIMUIKitState<SendApplication> {
     super.initState();
     final showName =
         widget.model.loginInfo?.nickName ?? widget.model.loginInfo?.userID;
-    _verficationController.text = "我是: $showName";
+    _verficationController.text = "哈喽，我是 $showName";
   }
 
   @override
@@ -151,6 +152,9 @@ class _SendApplicationState extends TIMUIKitState<SendApplication> {
                   Expanded(
                     child: TextField(
                       controller: _nickNameController,
+                      inputFormatters: [
+                        LengthLimitingChineseAndCharacterInputFormatter(32, 16),
+                      ],
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.zero,
                         border: InputBorder.none,
@@ -220,7 +224,7 @@ class _SendApplicationState extends TIMUIKitState<SendApplication> {
                   } else if (res.code == 0 && res.data?.resultCode == 30539) {
                     onTIMCallback(TIMCallback(
                         type: TIMCallbackType.INFO,
-                        infoRecommendText: TIM_t("好友申请已发出"),
+                        infoRecommendText: TIM_t("已发送申请"),
                         infoCode: 6661203));
                   } else if (res.code == 0 && res.data?.resultCode == 30515) {
                     onTIMCallback(TIMCallback(
@@ -258,5 +262,37 @@ class _SendApplicationState extends TIMUIKitState<SendApplication> {
           ),
           body: sendApplicationBody(),
         ));
+  }
+}
+
+class LengthLimitingChineseAndCharacterInputFormatter extends TextInputFormatter {
+  final int maxLength;
+  final int maxChineseLength;
+
+  LengthLimitingChineseAndCharacterInputFormatter(this.maxLength, this.maxChineseLength);
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    String newText = newValue.text;
+    int charCount = 0;
+    int chineseCharCount = 0;
+
+    for (int i = 0; i < newText.length; i++) {
+      String char = newText[i];
+      if (RegExp(r'[\u4e00-\u9fa5]').hasMatch(char)) {
+        chineseCharCount++;
+        charCount += 2;
+      } else {
+        charCount++;
+      }
+
+      if (chineseCharCount > maxChineseLength || charCount > maxLength) {
+        // 超过限制，返回旧的值（也可以截断）
+        return oldValue;
+      }
+    }
+
+    return newValue;
   }
 }
