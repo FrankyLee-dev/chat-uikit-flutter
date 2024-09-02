@@ -245,7 +245,7 @@ class _TIMUIKitConversationState extends TIMUIKitState<TIMUIKitConversation> {
           },
           backgroundColor: theme.conversationItemSliderClearBgColor ?? CommonColor.primaryColor,
           foregroundColor: theme.conversationItemSliderTextColor,
-          label: TIM_t("清除"),
+          label: TIM_t("清除聊天"),
           spacing: 0,
           autoClose: true,
         ),
