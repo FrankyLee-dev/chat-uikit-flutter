@@ -1421,6 +1421,7 @@ class _TIMUIKItHistoryMessageListItemState
                                     faceUrl: message.faceUrl ?? "",
                                     showName: MessageUtils.getDisplayName(
                                         message),
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                 ),
                               ),
@@ -1589,7 +1590,8 @@ class _TIMUIKItHistoryMessageListItemState
                                 },
                                 child: Avatar(faceUrl: message.faceUrl ?? "",
                                     showName: MessageUtils.getDisplayName(
-                                        message)),
+                                        message),
+                                  borderRadius: BorderRadius.circular(4),),
                               ),
                             ),
                         ],
