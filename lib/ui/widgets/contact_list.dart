@@ -111,6 +111,8 @@ class _ContactListState extends TIMUIKitState<ContactList> {
     final userCustomInfo = item?.userProfile?.customInfo;
     final lCountry = userCustomInfo?['LCountry'];
     final lCity = userCustomInfo?['LCity'];
+    final lLTime = userCustomInfo?['LLTime'];
+    final lNationFlag = userCustomInfo?['NFlag'] ?? "";
 
     final V2TimUserStatus? onlineStatus = widget.isShowOnlineStatus
         ? friendShipViewModel.userStatusList.firstWhere(
@@ -160,17 +162,34 @@ class _ContactListState extends TIMUIKitState<ContactList> {
                     },
                   ),
                 ),
-              Container(
-                padding: const EdgeInsets.only(bottom: 12),
-                margin: const EdgeInsets.only(right: 12),
-                child: SizedBox(
-                  height: isDesktopScreen ? 30 : 40,
-                  width: isDesktopScreen ? 30 : 40,
-                  child: Avatar(
-                      onlineStatus: onlineStatus,
-                      faceUrl: faceUrl,
-                      showName: showName),
-                ),
+              Stack(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    margin: const EdgeInsets.only(right: 12),
+                    child: SizedBox(
+                      height: isDesktopScreen ? 30 : 40,
+                      width: isDesktopScreen ? 30 : 40,
+                      child: Avatar(
+                        onlineStatus: onlineStatus,
+                        faceUrl: faceUrl,
+                        showName: showName,
+                        borderRadius: BorderRadius.circular(4),),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 8,
+                    right: 8,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(2),
+                      child: Image.network(
+                        lNationFlag,
+                        width: 14.93,
+                        height: 10.83,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               Expanded(
                   child: Container(
@@ -186,33 +205,43 @@ class _ContactListState extends TIMUIKitState<ContactList> {
                           fontSize: isDesktopScreen ? 14 : 15),
                     ),
                   )),
-              if (lCountry != null && lCity != null)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
+
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  if (lLTime != null)
                     Row(
                       children: [
-                        Image.network(
-                          "https://alicdn.msmds.cn/GemNeary/dingwei_icon.png",
-                          width: 10, height: 13, errorBuilder: (context, o, s) {
-                          return Container();
-                        },),
-                        SizedBox(width: 3,),
-                        Text(TIM_t("最近登录"),
+                        Text(TIM_t("上次登录：${lLTime.split(" ")?[0]}"),
                           style: TextStyle(
                             fontSize: 9, color: Color(0xFFB9BFCB),),)
                       ],
                     ),
-                    SizedBox(height: 5,),
-                    Text("$lCountry-$lCity",
-                      style: TextStyle(
-                        fontSize: 9, color: Color(0xFFAFB5C0),),),
-                  ],
-                )
+                  SizedBox(height: 5,),
+                  if (lCountry != null && lCity != null)
+                    Row(
+                      children: [
+                        Image.network(
+                          "https://alicdn.msmds.cn/GemNeary/dingwei_icon.png",
+                          width: 8,
+                          height: 10.4,
+                          errorBuilder: (context, o, s) {
+                            return Container();
+                          },),
+                        SizedBox(width: 3,),
+                        Text("$lCountry-$lCity",
+                          style: TextStyle(
+                            fontSize: 9, color: Color(0xFFAFB5C0),),),
+                      ],
+                    ),
+                ],
+              )
             ],
           ),
         ),
-        Divider(color: Color(0xFFE8E8E8), height: 0.8,indent: isDesktopScreen ? 58 : 68,),
+        Divider(color: Color(0xFFE8E8E8),
+          height: 0.8,
+          indent: isDesktopScreen ? 58 : 68,),
       ],
     );
   }
@@ -220,7 +249,10 @@ class _ContactListState extends TIMUIKitState<ContactList> {
   Widget getSusItem(BuildContext context, String tag) {
     return Container(
       height: 34,
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
       padding: EdgeInsets.only(left: 18),
       color: Color(0xFFF7F7F7),
       alignment: Alignment.centerLeft,

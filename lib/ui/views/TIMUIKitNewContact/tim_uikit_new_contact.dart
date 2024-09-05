@@ -125,12 +125,8 @@ class _TIMUIKitNewContactState extends TIMUIKitState<TIMUIKitNewContact> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 14, vertical: 6),
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: theme.primaryColor,
-                              border: Border.all(
-                                  width: 1,
-                                  color: theme.weakTextColor ??
-                                      CommonColor.weakTextColor)),
+                              borderRadius: BorderRadius.circular(4),
+                              color: theme.primaryColor,),
                           child: Text(
                             TIM_t("同意"),
                             style: TextStyle(
@@ -157,12 +153,8 @@ class _TIMUIKitNewContactState extends TIMUIKitState<TIMUIKitNewContact> {
                         child: InkWell(
                           child: Container(
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                color: Colors.white,
-                                border: Border.all(
-                                    width: 1,
-                                    color: theme.weakTextColor ??
-                                        CommonColor.weakTextColor)),
+                                borderRadius: BorderRadius.circular(4),
+                                color: Color(0xFFF2F2F2)),
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 14, vertical: 6),
                             child: Text(
@@ -212,6 +204,7 @@ class _TIMUIKitNewContactState extends TIMUIKitState<TIMUIKitNewContact> {
           if (newContactList != null && newContactList.isNotEmpty) {
             return ListView.builder(
               shrinkWrap: true,
+              padding: EdgeInsets.only(top: 10),
               itemCount: newContactList.length,
               itemBuilder: (context, index) {
                 final friendInfo = newContactList[index]!;
