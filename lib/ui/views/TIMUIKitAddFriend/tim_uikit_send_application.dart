@@ -73,7 +73,7 @@ class _SendApplicationState extends TIMUIKitState<SendApplication> {
                     width: 48,
                     height: 48,
                     margin: const EdgeInsets.only(right: 12),
-                    child: Avatar(faceUrl: faceUrl, showName: showName),
+                    child: Avatar(faceUrl: faceUrl, showName: showName, borderRadius: BorderRadius.circular(4),),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

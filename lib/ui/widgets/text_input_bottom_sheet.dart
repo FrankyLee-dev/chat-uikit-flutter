@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tencent_cloud_chat_uikit/ui/utils/screen_utils.dart';
 import 'package:tencent_cloud_chat_uikit/ui/widgets/drag_widget.dart';
 import 'package:tencent_im_base/tencent_im_base.dart';
@@ -38,7 +39,11 @@ class TextInputBottomSheet {
           ),
           Divider(height: 2, color: theme.weakDividerColor),
           TextField(
-
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                  RegExp(r'^[\u4e00-\u9fa5a-zA-Z0-9]+$')), // 允许中英文字符和数字
+              CustomLengthLimitingTextInputFormatter(20),
+            ],
             onSubmitted: (text) {
               onSubmitted(text);
               if (entry != null) {
@@ -148,6 +153,8 @@ class TextInputBottomSheet {
                     child: SizedBox(
                   child: ElevatedButton(
                       style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Color(0xFF07C160)),
+                        foregroundColor: MaterialStateProperty.all(Colors.white),
                         shape: MaterialStateProperty.all(RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5))),
                       ),
@@ -243,5 +250,37 @@ class TextInputBottomSheet {
                 selectionController: _selectionController);
           });
     }
+  }
+}
+
+class CustomLengthLimitingTextInputFormatter extends TextInputFormatter {
+  final int maxLength;
+
+  CustomLengthLimitingTextInputFormatter(this.maxLength);
+
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    int length = 0;
+
+    for (int i = 0; i < newValue.text.length; i++) {
+      if (newValue.text.codeUnitAt(i) > 255) {
+        length += 2; // 中文字符算2个长度
+      } else {
+        length += 1; // 英文字符和数字算1个长度
+      }
+    }
+
+    // 如果是删除操作，允许任何长度
+    if (newValue.text.length < oldValue.text.length) {
+      return newValue;
+    }
+
+    // 如果是添加操作，且超过最大长度，返回旧值
+    if (length > maxLength) {
+      return oldValue;
+    }
+
+    return newValue;
   }
 }
