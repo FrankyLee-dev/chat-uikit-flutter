@@ -171,7 +171,7 @@ class TIMUIKitConversationItem extends TIMUIKitStatelessWidget {
                                   style: TextStyle(
                                     height: 1,
                                     color: theme.conversationItemTitleTextColor,
-                                    fontSize: isDesktopScreen ? 14 : 18,
+                                    fontSize: isDesktopScreen ? 14 : 16,
                                     fontWeight: FontWeight.w400,
                                   ),
                                 )),

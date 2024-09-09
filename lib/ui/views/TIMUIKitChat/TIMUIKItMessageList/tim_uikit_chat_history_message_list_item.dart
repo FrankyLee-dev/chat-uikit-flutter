@@ -668,7 +668,8 @@ class _TIMUIKItHistoryMessageListItemState
         margin: const EdgeInsets.symmetric(vertical: 20),
         alignment: Alignment.center,
         child: Text(
-          TIM_t_para("{{option2}}撤回了一条消息", "$option2撤回了一条消息")(option2: option2),
+          TIM_t_para("{{option2}}撤回了一条消息", "$option2撤回了一条消息")(
+              option2: option2),
           style: TextStyle(color: theme.weakTextColor, fontSize: 12),
         ));
   }
@@ -938,21 +939,53 @@ class _TIMUIKItHistoryMessageListItemState
     return showDialog<bool>(
       context: context,
       builder: (context) {
-        return CupertinoAlertDialog(
-          title: Text(TIM_t("您确定要重发这条消息么？")),
-          actions: [
-            CupertinoDialogAction(
-              child: Text(TIM_t("确定")),
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-            ),
-            CupertinoDialogAction(
-              child: Text(TIM_t("取消")),
-              isDestructiveAction: true,
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 28),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10)
+              ),
+              child: Column(
+                children: [
+                  SizedBox(height: 24,),
+                  Text(TIM_t("您确定要重发这条消息么？"),
+                    style: TextStyle(fontSize: 16, color: Color(0xFF333333),),),
+                  SizedBox(height: 33,),
+                  Divider(
+                    color: Color(0x81979797),
+                    height: 0.4,
+                  ),
+                  IntrinsicHeight(
+                    child: Row(
+                      children: [
+                        Expanded(child: CupertinoDialogAction(
+                          child: Text(TIM_t("确定"),
+                            style: TextStyle(
+                              fontSize: 16, color: Color(0xFF576B95),),),
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                        ),),
+                        VerticalDivider(color: Color(0x81979797), width: 0.4,),
+                        Expanded(child: CupertinoDialogAction(
+                          child: Text(TIM_t("取消"),
+                            style: TextStyle(
+                              fontSize: 16, color: Colors.black,),),
+                          isDestructiveAction: true,
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),),
+                      ],
+                    ),
+                  ),
+
+                ],
+              ),
             ),
           ],
         );
@@ -1589,8 +1622,8 @@ class _TIMUIKItHistoryMessageListItemState
                                   }
                                 },
                                 child: Avatar(faceUrl: message.faceUrl ?? "",
-                                    showName: MessageUtils.getDisplayName(
-                                        message),
+                                  showName: MessageUtils.getDisplayName(
+                                      message),
                                   borderRadius: BorderRadius.circular(4),),
                               ),
                             ),
