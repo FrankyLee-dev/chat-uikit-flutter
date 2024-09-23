@@ -304,7 +304,7 @@ class TIMUIKitProfileWidget extends TIMUIKitClass {
               border:
                   Border(bottom: BorderSide(color: theme.weakDividerColor))),
           child: Text(
-            TIM_t("删除好友"),
+            TIM_t("删除联系人"),
             style: TextStyle(color: theme.cautionColor, fontSize: 17),
           ),
         ),

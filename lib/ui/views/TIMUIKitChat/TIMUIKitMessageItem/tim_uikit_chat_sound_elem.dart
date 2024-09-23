@@ -230,7 +230,7 @@ class _TIMUIKitSoundElemState extends TIMUIKitState<TIMUIKitSoundElem> {
                 Container(width: _getSoundLen()),
                 Text(
                   "''${stateElement.duration} ",
-                  style: TextStyle(color: Colors.white),
+                  style: widget.fontStyle,
                 ),
                 isPlaying
                     ? Image.asset(
@@ -238,14 +238,12 @@ class _TIMUIKitSoundElemState extends TIMUIKitState<TIMUIKitSoundElem> {
                   package: 'tencent_cloud_chat_uikit',
                   width: 16,
                   height: 16,
-                  color: Colors.white,
                 )
                     : Image.asset(
                   'images/voice_send.png',
                   package: 'tencent_cloud_chat_uikit',
                   width: 16,
                   height: 16,
-                  color: Colors.white,
                 ),
               ]
                   : [

@@ -106,7 +106,7 @@ class _TIMUIKitNewContactState extends TIMUIKitState<TIMUIKitNewContact> {
                                 showName,
                                 style: TextStyle(
                                     color: theme.darkTextColor,
-                                    fontSize: isDesktopScreen ? 14 : 18),
+                                    fontSize: isDesktopScreen ? 14 : 16),
                               ),
                               if (applicationText.isNotEmpty && isDesktopScreen)
                                 const SizedBox(
@@ -135,7 +135,7 @@ class _TIMUIKitNewContactState extends TIMUIKitState<TIMUIKitNewContact> {
                                 TIM_t("同意"),
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: isDesktopScreen ? 12 : null,
+                                  fontSize: isDesktopScreen ? 12 : 14,
                                 ),
                               ),
                             ),
@@ -165,7 +165,7 @@ class _TIMUIKitNewContactState extends TIMUIKitState<TIMUIKitNewContact> {
                                   TIM_t("拒绝"),
                                   style: TextStyle(
                                     color: theme.primaryColor,
-                                    fontSize: isDesktopScreen ? 12 : null,
+                                    fontSize: isDesktopScreen ? 12 : 14,
                                   ),
                                 ),
                               ),

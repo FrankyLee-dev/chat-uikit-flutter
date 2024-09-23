@@ -186,6 +186,9 @@ class _ContactListState extends TIMUIKitState<ContactList> {
                         lNationFlag,
                         width: 14.93,
                         height: 10.83,
+                        errorBuilder: (context, o, s) {
+                          return SizedBox();
+                        },
                       ),
                     ),
                   ),
