@@ -148,7 +148,7 @@ class _TIMUIKitAddFriendState extends TIMUIKitState<TIMUIKitAddFriend> {
               width: isDesktopScreen ? 38 : 48,
               height: isDesktopScreen ? 38 : 48,
               margin: const EdgeInsets.only(right: 16),
-              child: Avatar(faceUrl: faceUrl, showName: showName),
+              child: Avatar(faceUrl: faceUrl, showName: showName,borderRadius: BorderRadius.circular(4),),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
