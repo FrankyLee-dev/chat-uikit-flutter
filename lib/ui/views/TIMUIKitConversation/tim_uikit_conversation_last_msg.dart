@@ -16,9 +16,10 @@ class TIMUIKitLastMsg extends StatefulWidget {
   final BuildContext context;
   final double fontSize;
   final String? mediaType;
+  final String? location;
 
   const TIMUIKitLastMsg(
-      {Key? key, this.lastMsg, required this.groupAtInfoList, required this.context, this.fontSize = 14.0, this.mediaType,})
+      {Key? key, this.lastMsg, required this.groupAtInfoList, required this.context, this.fontSize = 14.0, this.mediaType,this.location,})
       : super(key: key);
 
   @override
@@ -99,6 +100,9 @@ class _TIMUIKitLastMsgState extends TIMUIKitState<TIMUIKitLastMsg> {
         }
         if (widget.mediaType == "video") {
           return TIM_t("[视频通话]");
+        }
+        if (widget.location != null) {
+          return TIM_t("[位置]${widget.location}");
         }
         return TIM_t("[自定义]");
       case MessageElemType.V2TIM_ELEM_TYPE_SOUND:

@@ -29,6 +29,8 @@ class TIMUIKitAddFriend extends StatefulWidget {
 
   final Widget? scannerWidget;
 
+  final Widget? prefixIcon;
+
   final Function(
       AddFriendLifeCycle? lifeCycle,
       bool? isShowDefaultGroup,
@@ -40,6 +42,7 @@ class TIMUIKitAddFriend extends StatefulWidget {
     this.lifeCycle,
     required this.onTapAlreadyFriendsItem,
     this.scannerWidget,
+    this.prefixIcon,
     this.onTap,
     this.closeFunc})
       : super(key: key);
@@ -148,7 +151,9 @@ class _TIMUIKitAddFriendState extends TIMUIKitState<TIMUIKitAddFriend> {
               width: isDesktopScreen ? 38 : 48,
               height: isDesktopScreen ? 38 : 48,
               margin: const EdgeInsets.only(right: 16),
-              child: Avatar(faceUrl: faceUrl, showName: showName,borderRadius: BorderRadius.circular(4),),
+              child: Avatar(faceUrl: faceUrl,
+                showName: showName,
+                borderRadius: BorderRadius.circular(4),),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,6 +243,7 @@ class _TIMUIKitAddFriendState extends TIMUIKitState<TIMUIKitAddFriend> {
                     children: [
                       Expanded(
                           child: Container(
+                            height: 36,
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(4),
@@ -255,6 +261,7 @@ class _TIMUIKitAddFriendState extends TIMUIKitState<TIMUIKitAddFriend> {
                                   });
                                 }
                               },
+                              style: TextStyle(fontSize: 16),
                               textInputAction: TextInputAction.search,
                               onSubmitted: (_) {
                                 final searchParams = _controller.text;
@@ -268,9 +275,13 @@ class _TIMUIKitAddFriendState extends TIMUIKitState<TIMUIKitAddFriend> {
                                 }
                               },
                               decoration: InputDecoration(
-                                  prefixIcon: Icon(
+                                  prefixIcon: widget.prefixIcon ?? Icon(
                                     Icons.search_outlined,
                                     color: theme.weakTextColor,
+                                  ),
+                                  prefixIconConstraints: BoxConstraints(
+                                    maxWidth: 40,
+                                    minWidth: 36,
                                   ),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
@@ -281,6 +292,7 @@ class _TIMUIKitAddFriendState extends TIMUIKitState<TIMUIKitAddFriend> {
                                   ),
                                   contentPadding: EdgeInsets.zero,
                                   hintStyle: TextStyle(
+                                    fontSize: 16,
                                     color: theme.weakTextColor,
                                   ),
                                   // fillColor: theme.inputFillColor,
@@ -298,7 +310,7 @@ class _TIMUIKitAddFriendState extends TIMUIKitState<TIMUIKitAddFriend> {
             if (showResult)
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: SingleChildScrollView(
                     child: Column(
                       children: _searchResultBuilder(searchResult, theme),
