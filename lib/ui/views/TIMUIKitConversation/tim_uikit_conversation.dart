@@ -337,7 +337,7 @@ class _TIMUIKitConversationState extends TIMUIKitState<TIMUIKitConversation> {
                               : isPined
                                   ? theme.conversationItemPinedBgColor
                                   : theme.conversationItemBgColor,
-                          child: GestureDetector(
+                          child: InkWell(
                             child: TIMUIKitConversationItem(
                                 isCurrent: isCurrent,
                                 isShowDraft: widget.isShowDraft,
