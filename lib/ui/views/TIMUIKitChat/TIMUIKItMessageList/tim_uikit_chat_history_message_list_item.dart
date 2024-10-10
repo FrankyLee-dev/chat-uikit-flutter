@@ -1334,7 +1334,7 @@ class _TIMUIKItHistoryMessageListItemState
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (model.isMultiSelect)
+                if (model.isMultiSelect && message.status == 2)
                   Container(
                     margin: EdgeInsets.only(
                         right: 12, top: 10, left: isSelf ? 16 : 0),

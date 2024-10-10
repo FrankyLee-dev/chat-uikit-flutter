@@ -213,6 +213,9 @@ class TIMUIKitMessageTooltipState
             widget.message.elemType == MessageElemType.V2TIM_ELEM_TYPE_IMAGE &&
             fileBeenDownloaded);
 
+    // 消息是否发送成功
+    final successMessage = widget.message.status == 2;
+
     final dynamicQuote =
         model.chatConfig.isAtWhenReplyDynamic?.call(widget.message);
 
@@ -279,7 +282,7 @@ class TIMUIKitMessageTooltipState
           return tooltipsConfig.showCopyMessage;
         }
         if (type == "forwardMessage") {
-          return tooltipsConfig.showForwardMessage &&
+          return successMessage && tooltipsConfig.showForwardMessage &&
               !(isDesktopScreen && widget.iSUseDefaultHoverBar);
         }
         if (type == "replyMessage") {
@@ -290,7 +293,7 @@ class TIMUIKitMessageTooltipState
           return (!PlatformUtils().isWeb) && tooltipsConfig.showDeleteMessage;
         }
         if (type == "multiSelect") {
-          return tooltipsConfig.showMultipleChoiceMessage;
+          return successMessage && tooltipsConfig.showMultipleChoiceMessage;
         }
 
         if (type == "revoke") {
