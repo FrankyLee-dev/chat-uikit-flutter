@@ -901,7 +901,7 @@ class _TIMUIKItHistoryMessageListItemState
       borderColor: theme?.white ?? Colors.white,
       backgroundColor: theme?.white ?? Colors.white,
       shadowColor: Colors.black26,
-      hasShadow: isDesktopScreen ? false : true,
+      hasShadow: false,
       borderWidth: 1.0,
       showCloseButton: ShowCloseButton.none,
       touchThroughAreaShape: ClipAreaShape.rectangle,
