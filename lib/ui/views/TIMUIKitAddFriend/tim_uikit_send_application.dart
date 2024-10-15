@@ -234,7 +234,7 @@ class _SendApplicationState extends TIMUIKitState<SendApplication> {
                   }
                 },
                 child: Text(TIM_t("发送"), style: TextStyle(
-                    color: theme.darkTextColor, fontSize: 16),),),
+                    color: theme.primaryColor, fontSize: 16),),),
             )
           ],
         ),
