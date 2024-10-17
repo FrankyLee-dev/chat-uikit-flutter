@@ -86,6 +86,9 @@ class TIMUIKitHistoryMessageListContainer extends StatefulWidget {
   /// If provided, the default message action functionality will appear in the right-click context menu instead.
   final Widget? Function(V2TimMessage message)? customMessageHoverBarOnDesktop;
 
+  /// 翻译
+  final OnTranslate? onTranslate;
+
   const TIMUIKitHistoryMessageListContainer({
     Key? key,
     this.itemBuilder,
@@ -112,6 +115,7 @@ class TIMUIKitHistoryMessageListContainer extends StatefulWidget {
     this.onSecondaryTapAvatar,
     this.groupMemberInfo,
     this.customMessageHoverBarOnDesktop,
+    this.onTranslate,
   }) : super(key: key);
 
   @override
@@ -173,6 +177,7 @@ class _TIMUIKitHistoryMessageListContainerState
           mainHistoryListConfig: widget.mainHistoryListConfig,
           itemBuilder: (context, message) {
             return TIMUIKitHistoryMessageListItem(
+                onTranslate: widget.onTranslate,
                 customMessageHoverBarOnDesktop:
                 widget.customMessageHoverBarOnDesktop,
                 groupMemberInfo: widget.groupMemberInfo,

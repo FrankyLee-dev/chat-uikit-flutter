@@ -7,174 +7,184 @@ import 'package:tencent_im_base/tencent_im_base.dart';
 class TextInputBottomSheet {
   static OverlayEntry? entry;
 
-  static Widget inputBoxContent(
-      {required BuildContext context,
-      required String title,
-        String? tips,
-      required Function(String text) onSubmitted,
-      required TUITheme theme,
-      bool isShowCancel = false,
-        Offset? initOffset,
-        String? initText,
-      required TextEditingController selectionController}) {
-    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) == DeviceType.Desktop;
+  static Widget inputBoxContent({required BuildContext context,
+    required String title,
+    String? tips,
+    required Function(String text) onSubmitted,
+    required TUITheme theme,
+    bool isShowCancel = false,
+    Offset? initOffset,
+    String? initText,
+    required TextEditingController selectionController}) {
+    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) ==
+        DeviceType.Desktop;
     selectionController.text = initText ?? "";
     return SingleChildScrollView(
         child: Container(
-      padding: EdgeInsets.only(
-        top: 16,
-        left: 16,
-        right: 16,
-        bottom:
-            isDesktopScreen ? 16 : MediaQuery.of(context).viewInsets.bottom + 30,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: Text(title,
-                style:
-                    const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
+          padding: EdgeInsets.only(
+            top: 16,
+            left: 16,
+            right: 16,
+            bottom:
+            isDesktopScreen ? 16 : MediaQuery
+                .of(context)
+                .viewInsets
+                .bottom + 30,
           ),
-          Divider(height: 2, color: theme.weakDividerColor),
-          TextField(
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(
-                  RegExp(r'^[\u4e00-\u9fa5a-zA-Z0-9]+$')), // 允许中英文字符和数字
-              CustomLengthLimitingTextInputFormatter(20),
-            ],
-            onSubmitted: (text) {
-              onSubmitted(text);
-              if (entry != null) {
-                entry?.remove();
-                entry = null;
-              } else {
-                Navigator.pop(context);
-              }
-            },
-            autofocus: true,
-            controller: selectionController,
-          ),
-          if(tips != null) Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                height: 40,
-                child: Text(
-                  tips,
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: Text(title,
+                    style:
+                    const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
+              ),
+              Divider(height: 2, color: theme.weakDividerColor),
+              TextField(
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                      RegExp(r'[a-zA-Z0-9\u4e00-\u9fa5]')), // 允许中英文字符和数字
+                  CustomLengthLimitingTextInputFormatter(20),
+                ],
+                onSubmitted: (text) {
+                  onSubmitted(text);
+                  if (entry != null) {
+                    entry?.remove();
+                    entry = null;
+                  } else {
+                    Navigator.pop(context);
+                  }
+                },
+                autofocus: true,
+                controller: selectionController,
+              ),
+              if(tips != null) Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    height: 40,
+                    child: Text(
+                      tips,
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    ),
+                  )
+                ],
+              ),
+              if (isDesktopScreen)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (isShowCancel)
+                      Container(
+                          margin: const EdgeInsets.only(right: 20),
+                          child: SizedBox(
+                            width: 84,
+                            child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      theme.wideBackgroundColor),
+                                  shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              5))),
+                                ),
+                                onPressed: () {
+                                  if (entry != null) {
+                                    entry?.remove();
+                                    entry = null;
+                                  } else {
+                                    Navigator.pop(context);
+                                  }
+                                },
+                                child: Text(
+                                  TIM_t("取消"),
+                                  style: TextStyle(color: theme.darkTextColor),
+                                )),
+                          )),
+                    SizedBox(
+                      width: 84,
+                      child: ElevatedButton(
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5))),
+                          ),
+                          onPressed: () {
+                            String text = selectionController.text;
+                            onSubmitted(text);
+                            if (entry != null) {
+                              entry?.remove();
+                              entry = null;
+                            } else {
+                              Navigator.pop(context);
+                            }
+                          },
+                          child: Text(TIM_t("保存"))),
+                    ),
+                  ],
                 ),
-              )
+              if (!isDesktopScreen)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (isShowCancel)
+                      Expanded(
+                          child: Container(
+                            margin: const EdgeInsets.only(right: 20),
+                            child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStateProperty.all(
+                                      theme.wideBackgroundColor),
+                                  shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              5))),
+                                ),
+                                onPressed: () {
+                                  if (entry != null) {
+                                    entry?.remove();
+                                    entry = null;
+                                  } else {
+                                    Navigator.pop(context);
+                                  }
+                                },
+                                child: Text(
+                                  TIM_t("取消"),
+                                  style: TextStyle(color: theme.darkTextColor),
+                                )),
+                          )),
+                    Expanded(
+                        child: SizedBox(
+                          child: ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    Color(0xFF07C160)),
+                                foregroundColor: MaterialStateProperty.all(
+                                    Colors.white),
+                                shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            5))),
+                              ),
+                              onPressed: () {
+                                String text = selectionController.text;
+                                onSubmitted(text);
+                                if (entry != null) {
+                                  entry?.remove();
+                                  entry = null;
+                                } else {
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: Text(TIM_t("确定"))),
+                        )),
+                  ],
+                ),
             ],
           ),
-          if (isDesktopScreen)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                if (isShowCancel)
-                  Container(
-                      margin: const EdgeInsets.only(right: 20),
-                      child: SizedBox(
-                        width: 84,
-                        child: ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(
-                                  theme.wideBackgroundColor),
-                              shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5))),
-                            ),
-                            onPressed: () {
-                              if (entry != null) {
-                                entry?.remove();
-                                entry = null;
-                              } else {
-                                Navigator.pop(context);
-                              }
-                            },
-                            child: Text(
-                              TIM_t("取消"),
-                              style: TextStyle(color: theme.darkTextColor),
-                            )),
-                      )),
-                SizedBox(
-                  width: 84,
-                  child: ElevatedButton(
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5))),
-                      ),
-                      onPressed: () {
-                        String text = selectionController.text;
-                        onSubmitted(text);
-                        if (entry != null) {
-                          entry?.remove();
-                          entry = null;
-                        } else {
-                          Navigator.pop(context);
-                        }
-                      },
-                      child: Text(TIM_t("保存"))),
-                ),
-              ],
-            ),
-          if (!isDesktopScreen)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (isShowCancel)
-                  Expanded(
-                      child: Container(
-                    margin: const EdgeInsets.only(right: 20),
-                    child: ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                              theme.wideBackgroundColor),
-                          shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5))),
-                        ),
-                        onPressed: () {
-                          if (entry != null) {
-                            entry?.remove();
-                            entry = null;
-                          } else {
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: Text(
-                          TIM_t("取消"),
-                          style: TextStyle(color: theme.darkTextColor),
-                        )),
-                  )),
-                Expanded(
-                    child: SizedBox(
-                  child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Color(0xFF07C160)),
-                        foregroundColor: MaterialStateProperty.all(Colors.white),
-                        shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5))),
-                      ),
-                      onPressed: () {
-                        String text = selectionController.text;
-                        onSubmitted(text);
-                        if (entry != null) {
-                          entry?.remove();
-                          entry = null;
-                        } else {
-                          Navigator.pop(context);
-                        }
-                      },
-                      child: Text(TIM_t("确定"))),
-                )),
-              ],
-            ),
-        ],
-      ),
-    ));
+        ));
   }
 
   static showTextInputBottomSheet({
@@ -187,22 +197,29 @@ class TextInputBottomSheet {
     String? initText,
   }) {
     TextEditingController _selectionController = TextEditingController();
-    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) == DeviceType.Desktop;
+    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) ==
+        DeviceType.Desktop;
     if (isDesktopScreen) {
       if (entry != null) {
         return;
       }
       entry = OverlayEntry(builder: (BuildContext context) {
         return TUIKitDragArea(
-          closeFun: (){
-            if(entry != null){
-              entry?.remove();
-              entry = null;
-            }
-          },
+            closeFun: () {
+              if (entry != null) {
+                entry?.remove();
+                entry = null;
+              }
+            },
             initOffset: initOffset ??
-                Offset(MediaQuery.of(context).size.height * 0.5 + 20,
-                    MediaQuery.of(context).size.height * 0.5 - 100),
+                Offset(MediaQuery
+                    .of(context)
+                    .size
+                    .height * 0.5 + 20,
+                    MediaQuery
+                        .of(context)
+                        .size
+                        .height * 0.5 - 100),
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(8)),
@@ -259,8 +276,8 @@ class CustomLengthLimitingTextInputFormatter extends TextInputFormatter {
   CustomLengthLimitingTextInputFormatter(this.maxLength);
 
   @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue,
+      TextEditingValue newValue) {
     int length = 0;
 
     for (int i = 0; i < newValue.text.length; i++) {

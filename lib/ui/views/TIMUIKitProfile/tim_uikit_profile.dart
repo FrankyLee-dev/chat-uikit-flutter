@@ -219,7 +219,7 @@ class _TIMUIKitProfileState extends TIMUIKitState<TIMUIKitProfile> {
           void handleTapRemarkBar({Offset? offset, String? initText}) {
             _controller.showTextInputBottomSheet(
                 initOffset: offset,
-                initText: initText,
+                initText: initText ?? userInfo.friendRemark,
                 context: context,
                 title: TIM_t("修改备注名"),
                 tips: TIM_t("仅限汉字、英文、数字和下划线"),

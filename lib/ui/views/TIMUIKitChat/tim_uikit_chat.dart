@@ -165,6 +165,9 @@ class TIMUIKitChat extends StatefulWidget {
   /// If you are an administrator, you need to hide the input module
   final bool? isAdministrator;
 
+  /// 翻译
+  final OnTranslate? onTranslate;
+
   TIMUIKitChat(
       {Key? key,
       this.groupID,
@@ -202,7 +205,8 @@ class TIMUIKitChat extends StatefulWidget {
       this.inputTopBuilder,
       this.onSecondaryTapAvatar,
       this.customMessageHoverBarOnDesktop,
-      this.isAdministrator = false,})
+      this.isAdministrator = false,
+      this.onTranslate})
       : super(key: key) {
     startTime = DateTime.now().millisecondsSinceEpoch;
   }
@@ -480,6 +484,7 @@ class _TUIChatState extends TIMUIKitState<TIMUIKitChat> {
                                 child: Listener(
                                   onPointerMove: closePanel,
                                   child: TIMUIKitHistoryMessageListContainer(
+                                    onTranslate: widget.onTranslate,
                                     customMessageHoverBarOnDesktop: widget.customMessageHoverBarOnDesktop,
                                     conversation: widget.conversation,
                                     groupMemberInfo: model.groupMemberList?.firstWhere((element) => element?.userID == selfUserID, orElse: () => null),

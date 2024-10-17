@@ -277,6 +277,9 @@ class TIMUIKitHistoryMessageListItem extends StatefulWidget {
   /// If provided, the default message action functionality will appear in the right-click context menu instead.
   final Widget? Function(V2TimMessage message)? customMessageHoverBarOnDesktop;
 
+  /// 使用火山翻译进行翻译
+  final OnTranslate? onTranslate;
+
   const TIMUIKitHistoryMessageListItem({Key? key,
     required this.message,
     @Deprecated(
@@ -307,7 +310,8 @@ class TIMUIKitHistoryMessageListItem extends StatefulWidget {
     this.textFieldController,
     this.onSecondaryTapForOthersPortrait,
     this.groupMemberInfo,
-    this.customMessageHoverBarOnDesktop})
+    this.customMessageHoverBarOnDesktop,
+    this.onTranslate})
       : super(key: key);
 
   @override
@@ -906,6 +910,7 @@ class _TIMUIKItHistoryMessageListItemState
       showCloseButton: ShowCloseButton.none,
       touchThroughAreaShape: ClipAreaShape.rectangle,
       content: TIMUIKitMessageTooltip(
+        onTranslate: widget.onTranslate,
         iSUseDefaultHoverBar: model.chatConfig.isUseMessageHoverBarOnDesktop &&
             widget.customMessageHoverBarOnDesktop == null,
         model: model,

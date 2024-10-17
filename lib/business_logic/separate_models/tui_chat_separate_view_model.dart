@@ -25,6 +25,8 @@ import 'package:uuid/uuid.dart';
 
 enum LoadDirection { previous, latest }
 
+typedef OnTranslate = Future<String> Function(String originText, String targetMessage);
+
 class TUIChatSeparateViewModel extends ChangeNotifier {
   final FriendshipServices _friendshipServices =
       serviceLocator<FriendshipServices>();
@@ -474,12 +476,14 @@ class TUIChatSeparateViewModel extends ChangeNotifier {
     }
   }
 
-  translateText(V2TimMessage message) async {
+  translateText(V2TimMessage message, OnTranslate? onTranslate,) async {
     final String originText = message.textElem?.text ?? "";
     final String deviceLocale = TIM_getCurrentDeviceLocale();
     final String targetMessage = deviceLocale.split("-")[0];
-    final translatedText =
-        await _messageService.translateText(originText, targetMessage);
+    // final translatedText =
+    //     await _messageService.translateText(originText, targetMessage);
+
+  final translatedText = await onTranslate?.call(originText, targetMessage);
 
     final LocalCustomDataModel localCustomData = LocalCustomDataModel.fromMap(
         json.decode(TencentUtils.checkString(message.localCustomData) ?? "{}"));

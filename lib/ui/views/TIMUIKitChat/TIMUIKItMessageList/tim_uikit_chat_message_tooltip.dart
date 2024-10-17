@@ -58,6 +58,8 @@ class TIMUIKitMessageTooltip extends StatefulWidget {
 
   final bool iSUseDefaultHoverBar;
 
+  final OnTranslate? onTranslate;
+
   const TIMUIKitMessageTooltip(
       {Key? key,
       this.toolTipsConfig,
@@ -71,7 +73,8 @@ class TIMUIKitMessageTooltip extends StatefulWidget {
       required this.onSelectSticker,
       this.isShowMoreSticker = false,
       this.groupMemberInfo,
-      required this.iSUseDefaultHoverBar})
+      required this.iSUseDefaultHoverBar,
+      this.onTranslate})
       : super(key: key);
 
   @override
@@ -479,7 +482,7 @@ class TIMUIKitMessageTooltipState
             messageItem.messageFromWeb);
         break;
       case 'translate':
-        model.translateText(widget.message);
+        model.translateText(widget.message, widget.onTranslate);
         break;
       case "multiSelect":
         model.updateMultiSelectStatus(true);
