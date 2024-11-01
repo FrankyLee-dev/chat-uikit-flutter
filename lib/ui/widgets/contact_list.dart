@@ -215,7 +215,7 @@ class _ContactListState extends TIMUIKitState<ContactList> {
                   if (lLTime != null)
                     Row(
                       children: [
-                        Text(TIM_t("上次登录：${lLTime.split(" ")?[0]}"),
+                        Text("${TIM_t("上次登录：")}${lLTime.split(" ")?[0]}",
                           style: TextStyle(
                             fontSize: 9, color: Color(0xFFB9BFCB),),)
                       ],

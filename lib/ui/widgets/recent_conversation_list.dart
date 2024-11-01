@@ -37,6 +37,10 @@ class _RecentForwardListState extends TIMUIKitState<RecentForwardList> {
         List.empty(growable: true);
     for (var i = 0; i < conversationList.length; i++) {
       final item = conversationList[i];
+      // 管理员不显示在转发列表中
+      // if (item?.userID != null && !item!.userID!.startsWith("administrator")) {
+      //   showList.add(ISuspensionBeanImpl(memberInfo: item, tagIndex: "#"));
+      // }
       showList.add(ISuspensionBeanImpl(memberInfo: item, tagIndex: "#"));
     }
     return showList;

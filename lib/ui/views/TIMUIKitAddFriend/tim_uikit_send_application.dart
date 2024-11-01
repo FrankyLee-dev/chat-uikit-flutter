@@ -39,7 +39,7 @@ class _SendApplicationState extends TIMUIKitState<SendApplication> {
     super.initState();
     final showName =
         widget.model.loginInfo?.nickName ?? widget.model.loginInfo?.userID;
-    _verficationController.text = "哈喽，我是 $showName";
+    _verficationController.text = "${TIM_t("哈喽，我是")} $showName";
   }
 
   @override

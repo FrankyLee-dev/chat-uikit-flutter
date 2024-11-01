@@ -17,9 +17,19 @@ class TIMUIKitLastMsg extends StatefulWidget {
   final double fontSize;
   final String? mediaType;
   final String? location;
+  final String? arrivalTip;
+  final Locale? locale;
 
   const TIMUIKitLastMsg(
-      {Key? key, this.lastMsg, required this.groupAtInfoList, required this.context, this.fontSize = 14.0, this.mediaType,this.location,})
+      {Key? key, this.lastMsg,
+        required this.groupAtInfoList,
+        required this.context,
+        this.fontSize = 14.0,
+        this.mediaType,
+        this.location,
+        this.arrivalTip,
+        this.locale,
+      })
       : super(key: key);
 
   @override
@@ -40,7 +50,9 @@ class _TIMUIKitLastMsgState extends TIMUIKitState<TIMUIKitLastMsg> {
     super.didUpdateWidget(oldWidget);
     if ((oldWidget.lastMsg?.msgID != widget.lastMsg?.msgID) ||
         (oldWidget.lastMsg?.id != widget.lastMsg?.id) ||
-        (oldWidget.lastMsg?.status != widget.lastMsg?.status)) {
+        (oldWidget.lastMsg?.status != widget.lastMsg?.status) ||
+        (oldWidget.locale != widget.locale)
+    ) {
       _getMsgElem();
     }
   }
@@ -102,7 +114,10 @@ class _TIMUIKitLastMsgState extends TIMUIKitState<TIMUIKitLastMsg> {
           return TIM_t("[视频通话]");
         }
         if (widget.location != null) {
-          return TIM_t("[位置]${widget.location}");
+          return "${TIM_t("[位置]")}${widget.location}";
+        }
+        if (widget.arrivalTip != null) {
+          return TIM_t("[提醒]");
         }
         return TIM_t("[自定义]");
       case MessageElemType.V2TIM_ELEM_TYPE_SOUND:
