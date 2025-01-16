@@ -37,7 +37,7 @@ class TIMUIKitMessageTooltip extends StatefulWidget {
 
   /// the callback for long press event, except myself avatar
   final Function(String? userId, String? nickName)?
-      onLongPressForOthersHeadPortrait;
+  onLongPressForOthersHeadPortrait;
 
   final bool isUseMessageReaction;
 
@@ -60,21 +60,20 @@ class TIMUIKitMessageTooltip extends StatefulWidget {
 
   final OnTranslate? onTranslate;
 
-  const TIMUIKitMessageTooltip(
-      {Key? key,
-      this.toolTipsConfig,
-      this.isUseMessageReaction = true,
-      required this.model,
-      required this.message,
-      required this.allowAtUserWhenReply,
-      this.onLongPressForOthersHeadPortrait,
-      required this.selectEmojiPanelPosition,
-      required this.onCloseTooltip,
-      required this.onSelectSticker,
-      this.isShowMoreSticker = false,
-      this.groupMemberInfo,
-      required this.iSUseDefaultHoverBar,
-      this.onTranslate})
+  const TIMUIKitMessageTooltip({Key? key,
+    this.toolTipsConfig,
+    this.isUseMessageReaction = true,
+    required this.model,
+    required this.message,
+    required this.allowAtUserWhenReply,
+    this.onLongPressForOthersHeadPortrait,
+    required this.selectEmojiPanelPosition,
+    required this.onCloseTooltip,
+    required this.onSelectSticker,
+    this.isShowMoreSticker = false,
+    this.groupMemberInfo,
+    required this.iSUseDefaultHoverBar,
+    this.onTranslate})
       : super(key: key);
 
   @override
@@ -85,7 +84,7 @@ class TIMUIKitMessageTooltipState
     extends TIMUIKitState<TIMUIKitMessageTooltip> {
   final TUIChatGlobalModel globalModal = serviceLocator<TUIChatGlobalModel>();
   final TUISelfInfoViewModel selfInfoViewModel =
-      serviceLocator<TUISelfInfoViewModel>();
+  serviceLocator<TUISelfInfoViewModel>();
   bool isShowMoreSticker = false;
   bool fileBeenDownloaded = false;
   String filePath = "";
@@ -112,7 +111,7 @@ class TIMUIKitMessageTooltipState
     if (PlatformUtils().isDesktop) {
       if (widget.message.fileElem != null) {
         String savePath = TencentUtils.checkString(
-                globalModal.getFileMessageLocation(widget.message.msgID)) ??
+            globalModal.getFileMessageLocation(widget.message.msgID)) ??
             TencentUtils.checkString(widget.message.fileElem!.localUrl) ??
             widget.message.fileElem?.path ??
             "";
@@ -124,8 +123,8 @@ class TIMUIKitMessageTooltipState
         }
       } else if (widget.message.imageElem != null) {
         if (TencentUtils.checkString(
-                    widget.message.imageElem!.imageList![0]!.localUrl) !=
-                null &&
+            widget.message.imageElem!.imageList![0]!.localUrl) !=
+            null &&
             File(widget.message.imageElem!.imageList![0]!.localUrl!)
                 .existsSync()) {
           fileBeenDownloaded = true;
@@ -133,7 +132,7 @@ class TIMUIKitMessageTooltipState
         }
       } else if (widget.message.videoElem != null) {
         if (TencentUtils.checkString(widget.message.videoElem!.localVideoUrl) !=
-                null &&
+            null &&
             File(widget.message.videoElem!.localVideoUrl!).existsSync()) {
           fileBeenDownloaded = true;
           return;
@@ -144,9 +143,11 @@ class TIMUIKitMessageTooltipState
   }
 
   bool isRevocable(int timestamp, int upperTimeLimit) =>
-      ((DateTime.now().millisecondsSinceEpoch / 1000).ceil() - timestamp <
+      ((DateTime
+          .now()
+          .millisecondsSinceEpoch / 1000).ceil() - timestamp <
           upperTimeLimit) &&
-      (widget.message.isSelf ?? true);
+          (widget.message.isSelf ?? true);
 
   Widget ItemInkWell({
     Widget? child,
@@ -197,8 +198,8 @@ class TIMUIKitMessageTooltipState
     }
   }
 
-  _buildLongPressTipItem(
-      TUITheme theme, TUIChatSeparateViewModel model, V2TimMessage message) {
+  _buildLongPressTipItem(TUITheme theme, TUIChatSeparateViewModel model,
+      V2TimMessage message) {
     final isDesktopScreen =
         TUIKitScreenUtils.getFormFactor(context) == DeviceType.Desktop;
     final isCanRevokeSelf = isRevocable(
@@ -211,7 +212,7 @@ class TIMUIKitMessageTooltipState
         MessageUtils.isCallingData(widget.message.customElem!.data!));
     final tooltipsConfig = widget.toolTipsConfig;
     final messageCanCopy = widget.message.elemType ==
-            MessageElemType.V2TIM_ELEM_TYPE_TEXT ||
+        MessageElemType.V2TIM_ELEM_TYPE_TEXT ||
         (isDesktopScreen &&
             widget.message.elemType == MessageElemType.V2TIM_ELEM_TYPE_IMAGE &&
             fileBeenDownloaded);
@@ -219,8 +220,17 @@ class TIMUIKitMessageTooltipState
     // 消息是否发送成功
     final successMessage = widget.message.status == 2;
 
+    // 是否已经有翻译文本
+    final isTranslate = widget.message.localCustomData != null &&
+        widget.message.localCustomData!.isNotEmpty;
+
+    debugPrint(
+        "widget.message.localCustomData: ${widget.message.localCustomData}");
+    debugPrint(
+        "widget.message.localCustomData: $isTranslate");
+
     final dynamicQuote =
-        model.chatConfig.isAtWhenReplyDynamic?.call(widget.message);
+    model.chatConfig.isAtWhenReplyDynamic?.call(widget.message);
 
     final List<MessageToolTipItem> defaultTipsList = [
       if (fileBeenDownloaded)
@@ -231,7 +241,8 @@ class TIMUIKitMessageTooltipState
             onClick: () => _onTap("open", model)),
       if (fileBeenDownloaded && PlatformUtils().isDesktop)
         MessageToolTipItem(
-            label: PlatformUtils().isMacOS ? TIM_t("在访达中打开") : TIM_t("查看文件夹"),
+            label: PlatformUtils().isMacOS ? TIM_t("在访达中打开") : TIM_t(
+                "查看文件夹"),
             id: "finder",
             iconImageAsset: "images/folder_open.png",
             onClick: () => _onTap("finder", model)),
@@ -250,7 +261,9 @@ class TIMUIKitMessageTooltipState
       if (shouldShowReplyAction)
         MessageToolTipItem(
             label: TIM_t(
-                (dynamicQuote ?? model.chatConfig.isAtWhenReply) ? "回复" : "引用"),
+                (dynamicQuote ?? model.chatConfig.isAtWhenReply)
+                    ? "回复"
+                    : "引用"),
             id: "replyMessage",
             iconImageAsset: "images/reply_message.png",
             onClick: () => _onTap("replyMessage", model)),
@@ -260,7 +273,7 @@ class TIMUIKitMessageTooltipState
           iconImageAsset: "images/multi_message.png",
           onClick: () => _onTap("multiSelect", model)),
       MessageToolTipItem(
-          label: TIM_t("翻译"),
+          label: TIM_t(isTranslate ? "取消翻译" : "翻译"),
           id: "translate",
           iconImageAsset: "images/translate.png",
           onClick: () => _onTap("translate", model)),
@@ -311,10 +324,10 @@ class TIMUIKitMessageTooltipState
     }
 
     final List<MessageToolTipItem>? customList =
-        widget.toolTipsConfig?.additionalMessageToolTips != null
-            ? (widget.toolTipsConfig?.additionalMessageToolTips!(
-                message, widget.onCloseTooltip))
-            : [];
+    widget.toolTipsConfig?.additionalMessageToolTips != null
+        ? (widget.toolTipsConfig?.additionalMessageToolTips!(
+        message, widget.onCloseTooltip))
+        : [];
 
     List<MessageToolTipItem> formattedTipsList = [
       ...defaultFormattedTipsList,
@@ -325,7 +338,8 @@ class TIMUIKitMessageTooltipState
     if (isDesktopScreen) {
       widgetList = formattedTipsList
           .map(
-            (item) => Material(
+            (item) =>
+            Material(
               color: Colors.white,
               child: InkWell(
                 onTap: () {
@@ -361,12 +375,13 @@ class TIMUIKitMessageTooltipState
                 ),
               ),
             ),
-          )
+      )
           .toList();
     } else {
       widgetList = formattedTipsList
           .map(
-            (item) => Material(
+            (item) =>
+            Material(
               color: Colors.white,
               child: ItemInkWell(
                 onTap: () {
@@ -399,7 +414,7 @@ class TIMUIKitMessageTooltipState
                 ),
               ),
             ),
-          )
+      )
           .toList();
     }
     if (widgetList.isEmpty && widget.isUseMessageReaction == false) {
@@ -433,18 +448,18 @@ class TIMUIKitMessageTooltipState
       case "open":
         if (widget.message.fileElem != null) {
           _onOpenDesktop(TencentUtils.checkString(
-                  globalModal.getFileMessageLocation(widget.message.msgID)) ??
+              globalModal.getFileMessageLocation(widget.message.msgID)) ??
               TencentUtils.checkString(widget.message.fileElem!.localUrl) ??
               widget.message.fileElem?.path ??
               "");
         } else if (widget.message.imageElem != null) {
           _onOpenDesktop(TencentUtils.checkString(
-                  widget.message.imageElem!.imageList?[0]?.localUrl) ??
+              widget.message.imageElem!.imageList?[0]?.localUrl) ??
               TencentUtils.checkString(widget.message.imageElem?.path) ??
               "");
         } else if (widget.message.videoElem != null) {
           _onOpenDesktop(TencentUtils.checkString(
-                  widget.message.videoElem!.localVideoUrl) ??
+              widget.message.videoElem!.localVideoUrl) ??
               TencentUtils.checkString(widget.message.videoElem?.videoPath) ??
               "");
         }
@@ -453,18 +468,18 @@ class TIMUIKitMessageTooltipState
         String savePath = "";
         if (widget.message.fileElem != null) {
           savePath = (TencentUtils.checkString(
-                  globalModal.getFileMessageLocation(widget.message.msgID)) ??
+              globalModal.getFileMessageLocation(widget.message.msgID)) ??
               TencentUtils.checkString(widget.message.fileElem!.localUrl) ??
               widget.message.fileElem?.path ??
               "");
         } else if (widget.message.imageElem != null) {
           savePath = (TencentUtils.checkString(
-                  widget.message.imageElem!.imageList?[0]?.localUrl) ??
+              widget.message.imageElem!.imageList?[0]?.localUrl) ??
               TencentUtils.checkString(widget.message.imageElem?.path) ??
               "");
         } else if (widget.message.videoElem != null) {
           savePath = (TencentUtils.checkString(
-                  widget.message.videoElem!.localVideoUrl) ??
+              widget.message.videoElem!.localVideoUrl) ??
               TencentUtils.checkString(widget.message.videoElem?.videoPath) ??
               "");
         }
@@ -493,7 +508,8 @@ class TIMUIKitMessageTooltipState
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ForwardMessageScreen(
+                builder: (context) =>
+                    ForwardMessageScreen(
                       conversationType: ConvType.c2c,
                       model: model,
                     )));
@@ -512,7 +528,7 @@ class TIMUIKitMessageTooltipState
         } else if (widget.message.elemType ==
             MessageElemType.V2TIM_ELEM_TYPE_IMAGE) {
           final savePath = (TencentUtils.checkString(
-                  widget.message.imageElem!.imageList?[0]?.localUrl) ??
+              widget.message.imageElem!.imageList?[0]?.localUrl) ??
               TencentUtils.checkString(widget.message.imageElem?.path) ??
               "");
           copyImageToClipboard(savePath);
@@ -521,7 +537,7 @@ class TIMUIKitMessageTooltipState
       case "replyMessage":
         model.repliedMessage = widget.message;
         final dynamicQuote =
-            model.chatConfig.isAtWhenReplyDynamic?.call(widget.message);
+        model.chatConfig.isAtWhenReplyDynamic?.call(widget.message);
         final isSelf = widget.message.isSelf ?? true;
         final isGroup =
             TencentUtils.checkString(widget.message.groupID) != null;
@@ -555,39 +571,42 @@ class TIMUIKitMessageTooltipState
       ],
       builder: (BuildContext context, Widget? w) {
         final TUIChatSeparateViewModel model =
-            Provider.of<TUIChatSeparateViewModel>(context);
+        Provider.of<TUIChatSeparateViewModel>(context);
         final bool haveExtraTipsConfig = widget.toolTipsConfig != null &&
             widget.toolTipsConfig?.additionalItemBuilder != null;
         Widget? extraTipsActionItem = haveExtraTipsConfig
             ? widget.toolTipsConfig!.additionalItemBuilder!(
-                widget.message, widget.onCloseTooltip, null, context)
+            widget.message, widget.onCloseTooltip, null, context)
             : null;
         final message = widget.message;
         return Container(
             decoration: isDesktopScreen
                 ? BoxDecoration(
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0xCCbebebe),
-                        offset: Offset(2, 2),
-                        blurRadius: 10,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                    border: Border.all(
-                      width: 1,
-                      color: hexToColor("dee0e3"),
-                    ),
-                    color: Colors.white,
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  )
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0xCCbebebe),
+                  offset: Offset(2, 2),
+                  blurRadius: 10,
+                  spreadRadius: 1,
+                ),
+              ],
+              border: Border.all(
+                width: 1,
+                color: hexToColor("dee0e3"),
+              ),
+              color: Colors.white,
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+            )
                 : null,
             color: isDesktopScreen ? null : Colors.white,
             padding: EdgeInsets.symmetric(
                 horizontal: 8, vertical: isDesktopScreen ? 8 : 4),
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                maxWidth: min(MediaQuery.of(context).size.width * 0.75, 350),
+                maxWidth: min(MediaQuery
+                    .of(context)
+                    .size
+                    .width * 0.75, 350),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -624,34 +643,38 @@ class TIMUIKitMessageTooltipState
                         if (!isDesktopScreen && widget.isUseMessageReaction)
                           Expanded(
                               child: Wrap(
-                            direction: Axis.horizontal,
-                            alignment:
+                                direction: Axis.horizontal,
+                                alignment:
                                 TUIKitScreenUtils.getFormFactor(context) ==
-                                        DeviceType.Mobile
+                                    DeviceType.Mobile
                                     ? WrapAlignment.spaceBetween
                                     : WrapAlignment.start,
-                            spacing: 4,
-                            runSpacing: 8,
-                            children: [
-                              ..._buildLongPressTipItem(theme, model, message),
-                              if (extraTipsActionItem != null)
-                                extraTipsActionItem
-                            ],
-                          )),
+                                spacing: 4,
+                                runSpacing: 8,
+                                children: [
+                                  ..._buildLongPressTipItem(
+                                      theme, model, message),
+                                  if (extraTipsActionItem != null)
+                                    extraTipsActionItem
+                                ],
+                              )),
                         if (!isDesktopScreen && !widget.isUseMessageReaction)
                           ConstrainedBox(
                             constraints: BoxConstraints(
                               maxWidth: min(
-                                  MediaQuery.of(context).size.width * 0.75,
+                                  MediaQuery
+                                      .of(context)
+                                      .size
+                                      .width * 0.75,
                                   350),
                             ),
                             child: Wrap(
                               direction: Axis.horizontal,
                               alignment:
-                                  TUIKitScreenUtils.getFormFactor(context) ==
-                                          DeviceType.Mobile
-                                      ? WrapAlignment.spaceBetween
-                                      : WrapAlignment.start,
+                              TUIKitScreenUtils.getFormFactor(context) ==
+                                  DeviceType.Mobile
+                                  ? WrapAlignment.spaceBetween
+                                  : WrapAlignment.start,
                               spacing: 4,
                               runSpacing: 8,
                               children: [

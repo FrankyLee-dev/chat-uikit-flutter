@@ -12,6 +12,7 @@ class TextInputBottomSheet {
     String? tips,
     required Function(String text) onSubmitted,
     required TUITheme theme,
+    Future<bool> Function(String remark, String toast)? onDetectRemask,
     bool isShowCancel = false,
     Offset? initOffset,
     String? initText,
@@ -42,18 +43,21 @@ class TextInputBottomSheet {
               ),
               Divider(height: 2, color: theme.weakDividerColor),
               TextField(
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(
-                      RegExp(r'[a-zA-Z0-9\u4e00-\u9fa5]')), // 允许中英文字符和数字
-                  CustomLengthLimitingTextInputFormatter(20),
-                ],
-                onSubmitted: (text) {
-                  onSubmitted(text);
-                  if (entry != null) {
-                    entry?.remove();
-                    entry = null;
-                  } else {
-                    Navigator.pop(context);
+                // inputFormatters: [
+                //   FilteringTextInputFormatter.allow(
+                //       RegExp(r'[a-zA-Z0-9\u4e00-\u9fa5]')), // 允许中英文字符和数字
+                //   CustomLengthLimitingTextInputFormatter(20),
+                // ],
+                onSubmitted: (text) async {
+                  var value = await onDetectRemask?.call(text, tips ?? "");
+                  if (value == true) {
+                    onSubmitted(text);
+                    if (entry != null) {
+                      entry?.remove();
+                      entry = null;
+                    } else {
+                      Navigator.pop(context);
+                    }
                   }
                 },
                 autofocus: true,
@@ -168,14 +172,18 @@ class TextInputBottomSheet {
                                         borderRadius: BorderRadius.circular(
                                             5))),
                               ),
-                              onPressed: () {
+                              onPressed: () async {
                                 String text = selectionController.text;
-                                onSubmitted(text);
-                                if (entry != null) {
-                                  entry?.remove();
-                                  entry = null;
-                                } else {
-                                  Navigator.pop(context);
+                                var value = await onDetectRemask?.call(
+                                    text, tips ?? "");
+                                if (value == true) {
+                                  onSubmitted(text);
+                                  if (entry != null) {
+                                    entry?.remove();
+                                    entry = null;
+                                  } else {
+                                    Navigator.pop(context);
+                                  }
                                 }
                               },
                               child: Text(TIM_t("确定"))),
@@ -195,6 +203,7 @@ class TextInputBottomSheet {
     required TUITheme theme,
     Offset? initOffset,
     String? initText,
+    Future<bool> Function(String remark, String toast)? onDetectRemask,
   }) {
     TextEditingController _selectionController = TextEditingController();
     final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) ==
@@ -264,6 +273,7 @@ class TextInputBottomSheet {
                 initText: initText,
                 onSubmitted: onSubmitted,
                 theme: theme,
+                onDetectRemask: onDetectRemask,
                 selectionController: _selectionController);
           });
     }

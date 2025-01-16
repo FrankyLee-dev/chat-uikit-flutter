@@ -53,6 +53,7 @@ class TIMUIKitProfileController {
     required String tips,
     required Function(String text) onSubmitted,
     required TUITheme theme,
+    Future<bool> Function(String remark, String toast)? onDetectRemask,
     Offset? initOffset,
     String? initText,
   }) {
@@ -63,7 +64,8 @@ class TIMUIKitProfileController {
         onSubmitted: onSubmitted,
         theme: theme,
         initOffset: initOffset,
-        initText: initText);
+        initText: initText,
+        onDetectRemask: onDetectRemask);
   }
 
   /// Load the profile data

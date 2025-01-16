@@ -223,6 +223,7 @@ class _TIMUIKitProfileState extends TIMUIKitState<TIMUIKitProfile> {
                 context: context,
                 title: TIM_t("修改备注名"),
                 tips: TIM_t("仅限汉字、英文、数字和下划线"),
+                onDetectRemask: widget.lifeCycle?.detectSettingRemark,
                 onSubmitted: (String remark) async {
                   final res =
                   await _controller.updateRemarks(widget.userID, remark);

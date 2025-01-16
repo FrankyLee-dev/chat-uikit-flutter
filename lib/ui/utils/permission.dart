@@ -18,11 +18,10 @@ class PermissionRequestInfo extends StatefulWidget {
   final int permissionType;
   final String appName;
 
-  const PermissionRequestInfo(
-      {Key? key,
-        required this.removeOverLay,
-        required this.permissionType,
-        required this.appName})
+  const PermissionRequestInfo({Key? key,
+    required this.removeOverLay,
+    required this.permissionType,
+    required this.appName})
       : super(key: key);
 
   @override
@@ -60,27 +59,32 @@ class _PermissionRequestInfo extends TIMUIKitState<PermissionRequestInfo>
       1: {
         "name": TIM_t("相机"),
         "icon": "images/chat_permission_icon_camera.png",
-        "text": TIM_t("为方便您将所拍摄的照片或视频发送给朋友，以及进行视频通话，请允许我们访问摄像头进行拍摄照片和视频。")
+        "text": TIM_t(
+            "为方便您将所拍摄的照片或视频发送给朋友，以及进行视频通话，请允许我们访问摄像头进行拍摄照片和视频。")
       },
       7: {
         "name": TIM_t("麦克风"),
         "icon": "images/chat_permission_icon_mic.png",
-        "text": TIM_t("为方便您发送语音消息、拍摄视频以及音视频通话，请允许我们使用麦克风进行录音。")
+        "text": TIM_t(
+            "为方便您发送语音消息、拍摄视频以及音视频通话，请允许我们使用麦克风进行录音。")
       },
       9: {
         "name": TIM_t("相册"),
         "icon": "images/chat_permission_icon_file.png",
-        "text": TIM_t("为方便您查看和选择相册里的图片视频发送给朋友，以及保存内容到设备，请允许我们访问您设备上的照片、媒体内容。")
+        "text": TIM_t(
+            "为方便您查看和选择相册里的图片视频发送给朋友，以及保存内容到设备，请允许我们访问您设备上的照片、媒体内容。")
       },
       15: {
         "name": TIM_t("存储"),
         "icon": "images/chat_permission_icon_file.png",
-        "text": TIM_t("为方便您查看和选择相册里的图片视频发送给朋友，以及保存内容到设备，请允许我们访问您设备上的照片、媒体内容。")
+        "text": TIM_t(
+            "为方便您查看和选择相册里的图片视频发送给朋友，以及保存内容到设备，请允许我们访问您设备上的照片、媒体内容。")
       },
       32: {
         "name": TIM_t("相册"),
         "icon": "images/chat_permission_icon_file.png",
-        "text": TIM_t("为方便您查看和选择相册里的图片视频发送给朋友，以及保存内容到设备，请允许我们访问您设备上的照片、媒体内容。")
+        "text": TIM_t(
+            "为方便您查看和选择相册里的图片视频发送给朋友，以及保存内容到设备，请允许我们访问您设备上的照片、媒体内容。")
       },
     }[widget.permissionType];
     final option2 = permission?["name"] ?? "";
@@ -112,7 +116,8 @@ class _PermissionRequestInfo extends TIMUIKitState<PermissionRequestInfo>
                     ),
                     Text(
                       TIM_t(widget.appName) +
-                          TIM_t_para(" 申请获取{{option2}}", " 申请获取$option2")(
+                          TIM_t_para(
+                              " 申请获取{{option2}}", " 申请获取$option2")(
                               option2: option2) +
                           TIM_t("权限"),
                       style: TextStyle(color: theme.white, fontSize: 18),
@@ -183,8 +188,8 @@ class Permissions {
     ];
   }
 
-  static String _permissionText(
-      BuildContext context, String appName, int value) {
+  static String _permissionText(BuildContext context, String appName,
+      int value) {
     final _prefix = TIM_t("需要授予");
     final _postfixList = <String>[
       TIM_t("日历"),
@@ -202,7 +207,8 @@ class Permissions {
       'sensors',
       'sms',
       'speech',
-      TIM_t(" 文件读写权限，以正常使用在聊天功能中的图片查看、选择能力和发送文件的能力。"),
+      TIM_t(
+          " 文件读写权限，以正常使用在聊天功能中的图片查看、选择能力和发送文件的能力。"),
       'ignoreBatteryOptimizations',
       'notification',
       'access_media_location',
@@ -226,13 +232,14 @@ class Permissions {
     return _prefix + appName + _postfixList[value];
   }
 
-  static Future<bool> checkPermission(
-      BuildContext context,
+  static Future<bool> checkPermission(BuildContext context,
       int value, [
         TUITheme? theme,
         bool isShowPermissionPage = true,
       ]) async {
-    final status = await Permission.byValue(value).status;
+    final status = await Permission
+        .byValue(value)
+        .status;
     if (status.isGranted || status.isLimited) {
       return true;
     }
@@ -243,7 +250,10 @@ class Permissions {
       isShowPermissionPage,
     );
     if (shouldRequestPermission != null && shouldRequestPermission) {
-      final isGranted = await Permission.byValue(value).request().isGranted;
+      final isGranted = await Permission
+          .byValue(value)
+          .request()
+          .isGranted;
       _entry?.remove();
       _entry = null;
       return isGranted;
@@ -318,11 +328,15 @@ class Permissions {
           content: Text(permissionText),
           actions: <Widget>[
             CupertinoDialogAction(
-              child: Text(TIM_t("以后再说")),
+              child: Text(TIM_t("以后再说"), style: TextStyle(
+                color: Colors.black,
+              ),),
               onPressed: closeDialog, // 关闭对话框
             ),
             CupertinoDialogAction(
-              child: Text(TIM_t("去开启")),
+              child: Text(TIM_t("去开启"), style: TextStyle(
+                color: Color(0xFF576B95),
+              ),),
               onPressed: getPermission,
             ),
           ],

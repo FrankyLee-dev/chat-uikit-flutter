@@ -23,11 +23,15 @@ class ProfileLifeCycle {
   /// The callback after the remark to a friend changed.
   FutureBool Function(String userID) didRemarkUpdated;
 
+  /// Detect when setting a note
+  FutureBool Function(String remark, String toast) detectSettingRemark;
+
   ProfileLifeCycle({
     this.didRemarkUpdated = DefaultLifeCycle.defaultAsyncBooleanSolution,
     this.didGetFriendInfo = DefaultLifeCycle.defaultFriendInfoSolution,
     this.shouldAddToBlockList = DefaultLifeCycle.defaultAsyncBooleanSolution,
     this.shouldAddFriend = DefaultLifeCycle.defaultAsyncBooleanSolution,
     this.shouldDeleteFriend = DefaultLifeCycle.defaultAsyncBooleanSolution,
+    this.detectSettingRemark = DefaultLifeCycle.defaultAsyncBooleanMultSolution,
   });
 }

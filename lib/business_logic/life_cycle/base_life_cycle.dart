@@ -52,6 +52,10 @@ abstract class DefaultLifeCycle {
     return true;
   }
 
+  static Future<bool> defaultAsyncBooleanMultSolution(remark, toast) async {
+    return true;
+  }
+
   static bool defaultBooleanSolution(dynamic) {
     return true;
   }
