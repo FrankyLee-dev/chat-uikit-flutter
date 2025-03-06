@@ -224,7 +224,7 @@ class _SendApplicationState extends TIMUIKitState<SendApplication> {
                   } else if (res.code == 0 && res.data?.resultCode == 30539) {
                     onTIMCallback(TIMCallback(
                         type: TIMCallbackType.INFO,
-                        infoRecommendText: TIM_t("已发送申请"),
+                        infoRecommendText: TIM_t("好友申请已发出"),
                         infoCode: 6661203));
                   } else if (res.code == 0 && res.data?.resultCode == 30515) {
                     onTIMCallback(TIMCallback(

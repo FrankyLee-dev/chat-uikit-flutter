@@ -206,7 +206,7 @@ class _TIMUIKitAppBarState extends TIMUIKitState<TIMUIKitAppBar> {
         fromUser: widget.conversationID,
       ),
       centerTitle: setAppbar?.centerTitle ?? (isDesktopScreen ? false : true),
-      leadingWidth: setAppbar?.leadingWidth ?? (isDesktopScreen ? 8 : 70),
+      leadingWidth: setAppbar?.leadingWidth ?? (isDesktopScreen ? 8 : 90),
       leading: Selector<TUIChatGlobalModel, Tuple2<bool, int>>(
           builder: (context, data, _) {
             final isMultiSelect = data.item1;
@@ -220,7 +220,7 @@ class _TIMUIKitAppBarState extends TIMUIKitState<TIMUIKitAppBar> {
                       TIM_t('取消'),
                       style: TextStyle(
                         color: theme.appbarTextColor ?? hexToColor("010000"),
-                        fontSize: 16,
+                        fontSize: 14,
                       ),
                     ),
                   )

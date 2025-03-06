@@ -950,6 +950,7 @@ class _TIMUIKItHistoryMessageListItemState
           children: [
             Container(
               margin: EdgeInsets.symmetric(horizontal: 28),
+              padding: EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10)
