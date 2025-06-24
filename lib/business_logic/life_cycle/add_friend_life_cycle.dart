@@ -9,7 +9,10 @@ class AddFriendLifeCycle {
       String userID, String? remark, String? friendGroup, String? addWording,
       [BuildContext? context]) shouldAddFriend;
 
+  void Function(String userID)? sendApplyMessage;
+
   AddFriendLifeCycle({
     this.shouldAddFriend = DefaultLifeCycle.defaultAddFriend,
+    this.sendApplyMessage,
   });
 }

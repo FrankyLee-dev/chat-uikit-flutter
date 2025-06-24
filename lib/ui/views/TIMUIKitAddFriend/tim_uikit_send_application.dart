@@ -73,7 +73,9 @@ class _SendApplicationState extends TIMUIKitState<SendApplication> {
                     width: 48,
                     height: 48,
                     margin: const EdgeInsets.only(right: 12),
-                    child: Avatar(faceUrl: faceUrl, showName: showName, borderRadius: BorderRadius.circular(4),),
+                    child: Avatar(faceUrl: faceUrl,
+                      showName: showName,
+                      borderRadius: BorderRadius.circular(4),),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -222,6 +224,9 @@ class _SendApplicationState extends TIMUIKitState<SendApplication> {
                         infoRecommendText: TIM_t("好友添加成功"),
                         infoCode: 6661202));
                   } else if (res.code == 0 && res.data?.resultCode == 30539) {
+                    if (widget.lifeCycle != null && widget.lifeCycle!.sendApplyMessage != null) {
+                      widget.lifeCycle!.sendApplyMessage!(userID);
+                    }
                     onTIMCallback(TIMCallback(
                         type: TIMCallbackType.INFO,
                         infoRecommendText: TIM_t("好友申请已发出"),
@@ -265,15 +270,17 @@ class _SendApplicationState extends TIMUIKitState<SendApplication> {
   }
 }
 
-class LengthLimitingChineseAndCharacterInputFormatter extends TextInputFormatter {
+class LengthLimitingChineseAndCharacterInputFormatter
+    extends TextInputFormatter {
   final int maxLength;
   final int maxChineseLength;
 
-  LengthLimitingChineseAndCharacterInputFormatter(this.maxLength, this.maxChineseLength);
+  LengthLimitingChineseAndCharacterInputFormatter(this.maxLength,
+      this.maxChineseLength);
 
   @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue,
+      TextEditingValue newValue) {
     String newText = newValue.text;
     int charCount = 0;
     int chineseCharCount = 0;

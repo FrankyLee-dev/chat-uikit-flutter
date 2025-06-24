@@ -28,12 +28,16 @@ class TIMUIKitNewContact extends StatefulWidget {
   /// the life cycle hooks for new contact business logic
   final NewContactLifeCycle? lifeCycle;
 
+  /// click avatar
+  final void Function(V2TimFriendApplication applicationInfo)? avatarClick;
+
   const TIMUIKitNewContact({Key? key,
     this.lifeCycle,
     this.onAccept,
     this.onRefuse,
     this.emptyBuilder,
-    this.itemBuilder})
+    this.itemBuilder,
+    this.avatarClick})
       : super(key: key);
 
   @override
@@ -73,12 +77,19 @@ class _TIMUIKitNewContactState extends TIMUIKitState<TIMUIKitNewContact> {
               Container(
                 padding: EdgeInsets.only(bottom: isDesktopScreen ? 10 : 12),
                 margin: const EdgeInsets.only(right: 12),
-                child: SizedBox(
-                  height: isDesktopScreen ? 30 : 40,
-                  width: isDesktopScreen ? 30 : 40,
-                  child: Avatar(faceUrl: faceUrl,
-                    showName: showName,
-                    borderRadius: BorderRadius.circular(4),),
+                child: InkWell(
+                  onTap: () {
+                    if (widget.avatarClick != null) {
+                      widget.avatarClick!(applicationInfo);
+                    }
+                  },
+                  child: SizedBox(
+                    height: isDesktopScreen ? 30 : 40,
+                    width: isDesktopScreen ? 30 : 40,
+                    child: Avatar(faceUrl: faceUrl,
+                      showName: showName,
+                      borderRadius: BorderRadius.circular(4),),
+                  ),
                 ),
               ),
               Expanded(
@@ -92,36 +103,46 @@ class _TIMUIKitNewContactState extends TIMUIKitState<TIMUIKitNewContact> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                              top: (applicationText.isNotEmpty &&
-                                  isDesktopScreen)
-                                  ? 10
-                                  : 0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                showName,
-                                style: TextStyle(
-                                    color: theme.darkTextColor,
-                                    fontSize: isDesktopScreen ? 14 : 16),
-                              ),
-                              if (applicationText.isNotEmpty && isDesktopScreen)
-                                const SizedBox(
-                                  height: 4,
-                                ),
-                              if (applicationText.isNotEmpty && isDesktopScreen)
+                        Expanded(child: InkWell(
+                          onTap: () {
+                            if (widget.avatarClick != null) {
+                              widget.avatarClick!(applicationInfo);
+                            }
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                                top: (applicationText.isNotEmpty &&
+                                    isDesktopScreen)
+                                    ? 10
+                                    : 0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
                                 Text(
-                                  applicationText,
+                                  showName,
                                   style: TextStyle(
-                                      color: theme.weakTextColor, fontSize: 12),
+                                      color: theme.darkTextColor,
+                                      fontSize: isDesktopScreen ? 14 : 16),
                                 ),
-                            ],
+                                if (applicationText.isNotEmpty)
+                                  const SizedBox(
+                                    height: 4,
+                                  ),
+                                if (applicationText.isNotEmpty)
+                                  Padding(padding: EdgeInsets.only(right: 4),
+                                    child: Text(
+                                      applicationText,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          color: theme.weakTextColor,
+                                          fontSize: 12),
+                                    ),),
+                              ],
+                            ),
                           ),
-                        ),
-                        Expanded(child: Container()),
+                        ),),
                         Container(
                           margin: const EdgeInsets.only(right: 8),
                           child: InkWell(

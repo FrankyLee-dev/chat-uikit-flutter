@@ -32,6 +32,10 @@ import 'package:universal_html/html.dart' as html;
 import 'package:tencent_cloud_chat_uikit/ui/utils/logger.dart';
 
 class MorePanelConfig {
+  static final int FILE_MAX_SIZE = 100 * 1024 * 1024;
+  static final int VIDEO_MAX_SIZE = 100 * 1024 * 1024;
+  static final int IMAGE_MAX_SIZE = 28 * 1024 * 1024;
+
   final bool showGalleryPickAction;
   final bool showCameraAction;
   final bool showFilePickAction;
@@ -76,9 +80,9 @@ class MorePanel extends StatefulWidget {
 
   const MorePanel(
       {required this.conversationID,
-      required this.conversationType,
-      Key? key,
-      this.morePanelConfig})
+        required this.conversationType,
+        Key? key,
+        this.morePanelConfig})
       : super(key: key);
 
   @override
@@ -88,7 +92,7 @@ class MorePanel extends StatefulWidget {
 class _MorePanelState extends TIMUIKitState<MorePanel> {
   final ImagePicker _picker = ImagePicker();
   final TUISelfInfoViewModel _selfInfoViewModel =
-      serviceLocator<TUISelfInfoViewModel>();
+  serviceLocator<TUISelfInfoViewModel>();
   Uint8List? fileContent;
   String? fileName;
   File? tempFile;
@@ -206,7 +210,7 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
                   color: Colors.white,
                   borderRadius: BorderRadius.all(Radius.circular(5))),
               child:
-                  Icon(Icons.video_file, color: hexToColor("5c6168"), size: 26),
+              Icon(Icons.video_file, color: hexToColor("5c6168"), size: 26),
             )),
       MorePanelItem(
           id: "file",
@@ -316,20 +320,19 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
     }).toList();
   }
 
-  _sendVideoMessage(AssetEntity asset, TUIChatSeparateViewModel model) async {
-    final plugin = FcNativeVideoThumbnail();
-    final originFile = await asset.originFile;
-    final size = await originFile!.length();
-    if (size >= 104857600) {
+  _sendVideoMessage(AssetEntity asset, int size, TUIChatSeparateViewModel model) async {
+    if (size >= MorePanelConfig.VIDEO_MAX_SIZE) {
       onTIMCallback(TIMCallback(
           type: TIMCallbackType.INFO,
-          infoRecommendText: TIM_t("发送失败,视频不能大于100MB"),
-          infoCode: 6660405));
+          infoRecommendText: TIM_t("文件大小超出了限制")));
       return;
     }
 
+    final plugin = FcNativeVideoThumbnail();
+    final originFile = await asset.originFile;
+
     final duration = asset.videoDuration.inSeconds;
-    final filePath = originFile.path;
+    final filePath = originFile!.path;
     final convID = widget.conversationID;
     final convType = widget.conversationType;
 
@@ -341,9 +344,9 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
       srcFile: originFile.path,
       destFile: tempPath,
       format: 'jpeg',
-      width: 128,
+      width: 1280,
       quality: 100,
-      height: 128,
+      height: 1280,
     );
     MessageUtils.handleMessageError(
         model.sendVideoMessage(
@@ -407,8 +410,16 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
             final originFile = await asset.originFile;
             final filePath = originFile?.path;
             final type = asset.type;
+            final size = await originFile!.length();
             if (filePath != null) {
               if (type == AssetType.image) {
+                if (size >= MorePanelConfig.IMAGE_MAX_SIZE) {
+                  onTIMCallback(TIMCallback(
+                      type: TIMCallbackType.INFO,
+                      infoRecommendText: TIM_t("文件大小超出了限制")));
+                  return;
+                }
+
                 MessageUtils.handleMessageError(
                     model.sendImageMessage(
                         imagePath: filePath,
@@ -418,19 +429,19 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
               }
 
               if (type == AssetType.video) {
-                _sendVideoMessage(asset, model);
+                _sendVideoMessage(asset, size, model);
               }
             }
           }
         }
       } else {
         FilePickerResult? result =
-            await FilePicker.platform.pickFiles(type: FileType.media);
+        await FilePicker.platform.pickFiles(type: FileType.media);
         if (result != null && result.files.isNotEmpty) {
           File file = File(result.files.single.path!);
           final String savePath = file.path;
           final String type = TencentUtils.getFileType(
-                  savePath.split(".")[savePath.split(".").length - 1])
+              savePath.split(".")[savePath.split(".").length - 1])
               .split("/")[0];
 
           if (type == "image") {
@@ -454,9 +465,9 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
   }
 
   _sendImageFromCamera(
-    TUIChatSeparateViewModel model,
-    TUITheme theme,
-  ) async {
+      TUIChatSeparateViewModel model,
+      TUITheme theme,
+      ) async {
     try {
       if (!await Permissions.checkPermission(
         context,
@@ -471,35 +482,6 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
         theme,
       );
 
-      if (PlatformUtils().isAndroid) {
-        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-        if ((androidInfo.version.sdkInt) >= 33) {
-          if (!await Permissions.checkPermission(
-            context,
-            Permission.photos.value,
-            theme,
-          )) {
-            return;
-          }
-        } else {
-          if (!await Permissions.checkPermission(
-            context,
-            Permission.storage.value,
-            theme,
-          )) {
-            return;
-          }
-        }
-      } else {
-        if (!await Permissions.checkPermission(
-          context,
-          Permission.photos.value,
-          theme,
-        )) {
-          return;
-        }
-      }
-
       final convID = widget.conversationID;
       final convType = widget.conversationType;
       final pickedFile = await CameraPicker.pickFromCamera(context,
@@ -509,7 +491,15 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
       final originFile = await pickedFile?.originFile;
       if (originFile != null) {
         final type = pickedFile!.type;
+        final size = await originFile!.length();
         if (type == AssetType.image) {
+          if (size >= MorePanelConfig.IMAGE_MAX_SIZE) {
+            onTIMCallback(TIMCallback(
+                type: TIMCallbackType.INFO,
+                infoRecommendText: TIM_t("文件大小超出了限制")));
+            return;
+          }
+
           MessageUtils.handleMessageError(
               model.sendImageMessage(
                   imagePath: originFile.path,
@@ -518,7 +508,7 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
               context);
         }
         if (type == AssetType.video) {
-          _sendVideoMessage(pickedFile, model);
+          _sendVideoMessage(pickedFile, size, model);
         }
       } else {
         // Toast.showToast(ToastType.fail, TIM_t("图片不能为空"), context);
@@ -589,9 +579,9 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
   }
 
   _sendFile(
-    TUIChatSeparateViewModel model,
-    TUITheme theme,
-  ) async {
+      TUIChatSeparateViewModel model,
+      TUITheme theme,
+      ) async {
     try {
       final convID = widget.conversationID;
       final convType = widget.conversationType;
@@ -620,6 +610,13 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
 
         File file = File(result.files.single.path!);
         final int size = file.lengthSync();
+        if (size >= MorePanelConfig.FILE_MAX_SIZE) {
+          onTIMCallback(TIMCallback(
+              type: TIMCallbackType.INFO,
+              infoRecommendText: TIM_t("文件大小超出了限制")));
+          return;
+        }
+
         final String savePath = file.path;
 
         MessageUtils.handleMessageError(
@@ -638,11 +635,11 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
   }
 
   _onFeatureTap(
-    String id,
-    BuildContext context,
-    TUIChatSeparateViewModel model,
-    TUITheme theme,
-  ) async {
+      String id,
+      BuildContext context,
+      TUIChatSeparateViewModel model,
+      TUITheme theme,
+      ) async {
     switch (id) {
       case "photo":
         _sendImageMessage(model, theme);
@@ -654,11 +651,11 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
         _sendFile(model, theme);
         break;
       case "image":
-        // only for web
+      // only for web
         _sendImageFileOnWeb(model);
         break;
       case "video":
-        // only for web
+      // only for web
         _sendVideoFileOnWeb(model);
         break;
       case "voiceCall":
@@ -672,13 +669,21 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
 
   _goToVideoUI(String type) async {
     if (!PlatformUtils().isWeb) {
-      final hasCameraPermission = type == TYPE_VIDEO
-          ? await Permissions.checkPermission(context, Permission.camera.value)
-          : true;
-      final hasMicphonePermission = await Permissions.checkPermission(
-          context, Permission.microphone.value);
-      if (!hasCameraPermission || !hasMicphonePermission) {
-        return;
+      bool hasCameraPermission = false;
+      bool hasMicrophonePermission = false;
+      if (type == TYPE_VIDEO) {
+        hasCameraPermission = await Permissions.checkPermission(context, Permission.camera.value);
+        hasMicrophonePermission = await Permissions.checkPermission(
+            context, Permission.microphone.value);
+        if (!hasCameraPermission || !hasMicrophonePermission) {
+          return;
+        }
+      } else {
+        hasMicrophonePermission = await Permissions.checkPermission(
+            context, Permission.microphone.value);
+        if (!hasMicrophonePermission) {
+          return;
+        }
       }
     }
 
@@ -715,7 +720,7 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
   Widget tuiBuild(BuildContext context, TUIKitBuildValue value) {
     final TUITheme theme = value.theme;
     final TUIChatSeparateViewModel model =
-        Provider.of<TUIChatSeparateViewModel>(context);
+    Provider.of<TUIChatSeparateViewModel>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     return Container(
       height: 248,
@@ -736,35 +741,35 @@ class _MorePanelState extends TIMUIKitState<MorePanel> {
             runSpacing: 20,
             children: itemList(model, theme)
                 .map((item) => InkWell(
-                    onTap: () {
-                      if (item.onTap != null) {
-                        item.onTap!(context);
-                      }
-                    },
-                    child: widget.morePanelConfig?.actionBuilder != null
-                        ? widget.morePanelConfig?.actionBuilder!(item)
-                        : SizedBox(
-                            height: 94,
-                            width: 64,
-                            child: Column(
-                              children: [
-                                Container(
-                                  height: 64,
-                                  width: 64,
-                                  margin: const EdgeInsets.only(bottom: 4),
-                                  decoration: const BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5))),
-                                  child: item.icon,
-                                ),
-                                Text(
-                                  item.title,
-                                  style: TextStyle(
-                                      fontSize: 12, color: theme.darkTextColor),
-                                )
-                              ],
-                            ),
-                          )))
+                onTap: () {
+                  if (item.onTap != null) {
+                    item.onTap!(context);
+                  }
+                },
+                child: widget.morePanelConfig?.actionBuilder != null
+                    ? widget.morePanelConfig?.actionBuilder!(item)
+                    : SizedBox(
+                  height: 94,
+                  width: 64,
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 64,
+                        width: 64,
+                        margin: const EdgeInsets.only(bottom: 4),
+                        decoration: const BoxDecoration(
+                            borderRadius:
+                            BorderRadius.all(Radius.circular(5))),
+                        child: item.icon,
+                      ),
+                      Text(
+                        item.title,
+                        style: TextStyle(
+                            fontSize: 12, color: theme.darkTextColor),
+                      )
+                    ],
+                  ),
+                )))
                 .toList(),
           ),
         ),
