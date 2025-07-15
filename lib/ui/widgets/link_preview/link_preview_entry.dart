@@ -12,6 +12,7 @@ class LinkPreviewEntry {
   static LinkPreviewText? getHyperlinksText(String messageText, bool isMarkdown,
       {Function(String)? onLinkTap,
       bool isEnableTextSelection = false,
+      bool enableLink = true,
       bool isUseQQPackage = false,
       bool isUseTencentCloudChatPackage = false,
       List<CustomEmojiFaceData> customEmojiStickerList = const []}) {
@@ -30,6 +31,7 @@ class LinkPreviewEntry {
               isEnableTextSelection: isEnableTextSelection,
               messageText: messageText,
               style: style,
+              enableLink: enableLink,
               onLinkTap: onLinkTap,
               isUseQQPackage: isUseQQPackage,
               isUseTencentCloudChatPackage: isUseTencentCloudChatPackage,

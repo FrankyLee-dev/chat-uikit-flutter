@@ -71,7 +71,7 @@ class TIMUIKitSearchItem extends TIMUIKitStatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   clipBehavior: Clip.none,
-                  children: [Avatar(faceUrl: faceUrl, showName: showName)],
+                  children: [Avatar(faceUrl: faceUrl, showName: showName,borderRadius: BorderRadius.circular(4),)],
                 ),
               ),
               Expanded(

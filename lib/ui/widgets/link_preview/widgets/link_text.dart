@@ -33,15 +33,14 @@ class LinkTextMarkdown extends TIMStatelessWidget {
 
   final List<CustomEmojiFaceData> customEmojiStickerList;
 
-  const LinkTextMarkdown(
-      {Key? key,
-      required this.messageText,
-      this.isUseQQPackage = false,
-      this.isUseTencentCloudChatPackage = false,
-      this.customEmojiStickerList = const [],
-      this.isEnableTextSelection,
-      this.onLinkTap,
-      this.style})
+  const LinkTextMarkdown({Key? key,
+    required this.messageText,
+    this.isUseQQPackage = false,
+    this.isUseTencentCloudChatPackage = false,
+    this.customEmojiStickerList = const [],
+    this.isEnableTextSelection,
+    this.onLinkTap,
+    this.style})
       : super(key: key);
 
   @override
@@ -53,17 +52,15 @@ class LinkTextMarkdown extends TIMStatelessWidget {
           customEmojiStickerList: customEmojiStickerList),
       selectable: isEnableTextSelection ?? false,
       styleSheet: MarkdownStyleSheet.fromTheme(ThemeData(
-              textTheme: TextTheme(
-                  bodyMedium: style ?? const TextStyle(fontSize: 16.0))))
+          textTheme: TextTheme(
+              bodyMedium: style ?? const TextStyle(fontSize: 16.0))))
           .copyWith(
         a: TextStyle(color: LinkUtils.hexToColor("015fff")),
       ),
       extensionSet: md.ExtensionSet.gitHubWeb,
-      onTapLink: (
-        String link,
-        String? href,
-        String title,
-      ) {
+      onTapLink: (String link,
+          String? href,
+          String title,) {
         if (onLinkTap != null) {
           onLinkTap!(href ?? "");
         } else {
@@ -92,15 +89,17 @@ class LinkText extends TIMStatelessWidget {
 
   final bool? isEnableTextSelection;
 
-  const LinkText(
-      {Key? key,
-      required this.messageText,
-      this.onLinkTap,
-      this.isEnableTextSelection,
-      this.style,
-      this.isUseQQPackage = false,
-      this.isUseTencentCloudChatPackage = false,
-      this.customEmojiStickerList = const []})
+  final bool enableLink;
+
+  const LinkText({Key? key,
+    required this.messageText,
+    this.onLinkTap,
+    this.isEnableTextSelection,
+    this.enableLink = true,
+    this.style,
+    this.isUseQQPackage = false,
+    this.isUseTencentCloudChatPackage = false,
+    this.customEmojiStickerList = const []})
       : super(key: key);
 
   String _getContentSpan(String text, BuildContext context) {
@@ -124,7 +123,7 @@ class LinkText extends TIMStatelessWidget {
         );
       }
 
-      if (LinkUtils.urlReg.hasMatch(c)) {
+      if (enableLink && LinkUtils.urlReg.hasMatch(c)) {
         contentData += '\$' + c + '\$';
         _contentList.add(TextSpan(
             text: c,
@@ -160,15 +159,15 @@ class LinkText extends TIMStatelessWidget {
   Widget timBuild(BuildContext context) {
     return ExtendedText(_getContentSpan(messageText, context), softWrap: true,
         onSpecialTextTap: (dynamic parameter) {
-      if (parameter.toString().startsWith('\$')) {
-        if (onLinkTap != null) {
-          onLinkTap!((parameter.toString()).replaceAll('\$', ''));
-        } else {
-          LinkUtils.launchURL(
-              context, (parameter.toString()).replaceAll('\$', ''));
-        }
-      }
-    },
+          if (parameter.toString().startsWith('\$')) {
+            if (onLinkTap != null) {
+              onLinkTap!((parameter.toString()).replaceAll('\$', ''));
+            } else {
+              LinkUtils.launchURL(
+                  context, (parameter.toString()).replaceAll('\$', ''));
+            }
+          }
+        },
         style: style ?? const TextStyle(fontSize: 16.0),
         specialTextSpanBuilder: DefaultSpecialTextSpanBuilder(
           isUseQQPackage: isUseQQPackage,

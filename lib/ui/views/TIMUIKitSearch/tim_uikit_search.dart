@@ -34,6 +34,8 @@ class TIMUIKitSearch extends StatefulWidget {
 
   final bool? isAutoFocus;
 
+  final Widget? prefixIcon;
+
   const TIMUIKitSearch(
       {required this.onTapConversation,
       Key? key,
@@ -43,7 +45,8 @@ class TIMUIKitSearch extends StatefulWidget {
           this.onEnterConversation,
       this.isAutoFocus = true,
       this.onEnterSearchInConversation,
-      this.onBack})
+      this.onBack,
+      this.prefixIcon})
       : super(key: key);
 
   @override
@@ -56,7 +59,7 @@ class TIMUIKitSearchState extends TIMUIKitState<TIMUIKitSearch> {
   final FocusNode focusNode = FocusNode();
   GlobalKey<dynamic> inputTextField = GlobalKey();
   List<SearchType> searchTypes = [
-    SearchType.group,
+    // SearchType.group,
     SearchType.contact,
     SearchType.history
   ];
@@ -106,7 +109,7 @@ class TIMUIKitSearchState extends TIMUIKitState<TIMUIKitSearch> {
                     model.searchByKey(value);
                   },
                   controller: textEditingController,
-                  prefixIcon: Icon(
+                  prefixIcon: widget.prefixIcon ?? Icon(
                     Icons.search,
                     size: 16,
                     color: hexToColor("979797"),
@@ -144,17 +147,17 @@ class TIMUIKitSearchState extends TIMUIKitState<TIMUIKitSearch> {
                                 });
                               },
                               friendResultList: friendResultList),
-                        if (searchTypes.contains(SearchType.group))
-                          TIMUIKitSearchGroup(
-                            groupList: groupList,
-                            onTapConversation: (conversation, message) {
-                              focusNode.unfocus();
-                              Future.delayed(const Duration(milliseconds: 100),
-                                  () {
-                                widget.onTapConversation(conversation, message);
-                              });
-                            },
-                          ),
+                        // if (searchTypes.contains(SearchType.group))
+                        //   TIMUIKitSearchGroup(
+                        //     groupList: groupList,
+                        //     onTapConversation: (conversation, message) {
+                        //       focusNode.unfocus();
+                        //       Future.delayed(const Duration(milliseconds: 100),
+                        //           () {
+                        //         widget.onTapConversation(conversation, message);
+                        //       });
+                        //     },
+                        //   ),
                         if (searchTypes.contains(SearchType.history))
                           TIMUIKitSearchMsg(
                             onTapConversation: widget.onTapConversation,

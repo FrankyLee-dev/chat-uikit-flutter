@@ -177,6 +177,9 @@ class TIMUIKitChatConfig {
   /// [Default]: false.
   final bool isSupportMarkdownForTextMessage;
 
+  /// enable link tap
+  final bool enableLink;
+
   /// The callback after user clicking the URL link in text messages.
   /// The default action is opening the link with the default browser of system.
   final void Function(String url)? onTapLink;
@@ -258,6 +261,7 @@ class TIMUIKitChatConfig {
       this.notificationAndroidSound = "",
       this.isUseMessageHoverBarOnDesktop = true,
       this.isSupportMarkdownForTextMessage = false,
+      this.enableLink = true,
       this.notificationExt,
       this.isUseMessageReaction = true,
       this.isShowAvatar = true,

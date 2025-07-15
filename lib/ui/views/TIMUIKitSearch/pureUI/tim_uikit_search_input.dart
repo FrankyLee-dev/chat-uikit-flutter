@@ -51,17 +51,15 @@ class TIMUIKitSearchInputState extends TIMUIKitState<TIMUIKitSearchInput> {
     return Container(
       // height: 64,
       padding: EdgeInsets.fromLTRB(16, isDesktopScreen ? 16 : 8, 16, 16),
-      margin: isDesktopScreen ? const EdgeInsets.only(bottom: 2) : null,
+      // margin: isDesktopScreen ? const EdgeInsets.only(bottom: 2) : null,
       decoration: BoxDecoration(
-          color: isDesktopScreen
-              ? theme.wideBackgroundColor
-              : theme.primaryColor,
-          boxShadow: [
-            BoxShadow(
-              color: theme.weakBackgroundColor ?? hexToColor("E6E9EB"),
-              offset: const Offset(0.0, 2.0),
-            )
-          ]
+          color: Color(0xFFEDEDED),
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: theme.weakBackgroundColor ?? hexToColor("E6E9EB"),
+          //     offset: const Offset(0.0, 2.0),
+          //   )
+          // ]
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -138,7 +136,7 @@ class TIMUIKitSearchInputState extends TIMUIKitState<TIMUIKitSearchInput> {
                 },
                 child: Text(TIM_t("取消"),
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Colors.blueAccent,
                     )),
               ))
         ],

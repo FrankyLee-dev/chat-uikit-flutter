@@ -34,12 +34,14 @@ class _SendApplicationState extends TIMUIKitState<SendApplication> {
   final TextEditingController _verficationController = TextEditingController();
   final TextEditingController _nickNameController = TextEditingController();
 
+  bool availableSendBtn = true;
+
   @override
   void initState() {
     super.initState();
     final showName =
         widget.model.loginInfo?.nickName ?? widget.model.loginInfo?.userID;
-    _verficationController.text = "${TIM_t("哈喽，我是")} $showName";
+    // _verficationController.text = "${TIM_t("哈喽，我是")} $showName";
   }
 
   @override
@@ -128,7 +130,7 @@ class _SendApplicationState extends TIMUIKitState<SendApplication> {
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintStyle: TextStyle(color: theme.textgrey),
-                  hintText: '',
+                  hintText: '${TIM_t("请填写添加好友的理由")}',
                 ),
               ),
             ),
@@ -195,11 +197,15 @@ class _SendApplicationState extends TIMUIKitState<SendApplication> {
                 ),
               ),
             Container(
-              color: theme.white,
+              color: availableSendBtn ? theme.white : theme.weakBackgroundColor,
               width: double.infinity,
               margin: const EdgeInsets.only(top: 10),
               child: TextButton(
+                style: TextButton.styleFrom(
+                  splashFactory: availableSendBtn ? InkSplash.splashFactory : NoSplash.splashFactory,
+                ),
                 onPressed: () async {
+                  if (!availableSendBtn) return;
                   final remark = _nickNameController.text;
                   final addWording = _verficationController.text;
                   final friendGroup = TIM_t("我的好友");
@@ -211,6 +217,10 @@ class _SendApplicationState extends TIMUIKitState<SendApplication> {
                     return;
                   }
 
+                  if (widget.lifeCycle?.showLoading != null) {
+                    widget.lifeCycle?.showLoading!.call();
+                  }
+
                   final res = await _friendshipServices.addFriend(
                       userID: userID,
                       addType: FriendTypeEnum.V2TIM_FRIEND_TYPE_BOTH,
@@ -218,28 +228,43 @@ class _SendApplicationState extends TIMUIKitState<SendApplication> {
                       addWording: addWording,
                       friendGroup: friendGroup);
 
+                  if (widget.lifeCycle?.dissmissLoading != null) {
+                    widget.lifeCycle?.dissmissLoading!.call();
+                  }
+
                   if (res.code == 0 && res.data?.resultCode == 0) {
                     onTIMCallback(TIMCallback(
                         type: TIMCallbackType.INFO,
                         infoRecommendText: TIM_t("好友添加成功"),
                         infoCode: 6661202));
+                    setState(() {
+                      availableSendBtn = false;
+                    });
                   } else if (res.code == 0 && res.data?.resultCode == 30539) {
-                    if (widget.lifeCycle != null && widget.lifeCycle!.sendApplyMessage != null) {
+                    if (widget.lifeCycle != null &&
+                        widget.lifeCycle!.sendApplyMessage != null) {
                       widget.lifeCycle!.sendApplyMessage!(userID);
                     }
                     onTIMCallback(TIMCallback(
                         type: TIMCallbackType.INFO,
                         infoRecommendText: TIM_t("好友申请已发出"),
                         infoCode: 6661203));
+                    setState(() {
+                      availableSendBtn = false;
+                    });
                   } else if (res.code == 0 && res.data?.resultCode == 30515) {
                     onTIMCallback(TIMCallback(
                         type: TIMCallbackType.INFO,
                         infoRecommendText: TIM_t("当前用户在黑名单"),
                         infoCode: 6661204));
+                    setState(() {
+                      availableSendBtn = false;
+                    });
                   }
                 },
                 child: Text(TIM_t("发送"), style: TextStyle(
-                    color: theme.primaryColor, fontSize: 16),),),
+                    color: availableSendBtn ? theme.primaryColor : theme
+                        .textgrey, fontSize: 16),),),
             )
           ],
         ),

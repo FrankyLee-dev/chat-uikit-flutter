@@ -166,6 +166,7 @@ class _TIMUIKitTextElemState extends TIMUIKitState<TIMUIKitTextElem> {
         widget.message.textElem?.text ?? "",
         widget.chatModel.chatConfig.isSupportMarkdownForTextMessage,
         onLinkTap: widget.chatModel.chatConfig.onTapLink,
+        enableLink: widget.chatModel.chatConfig.enableLink,
         isUseQQPackage: (widget.chatModel.chatConfig.stickerPanelConfig
             ?.useTencentCloudChatStickerPackage ??
             true) ||

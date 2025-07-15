@@ -580,10 +580,9 @@ class _TUIChatState extends TIMUIKitState<TIMUIKitChat> {
                           Selector<TUIChatSeparateViewModel, bool>(
                             builder: (context, value, child) {
                               if (widget.isAdministrator == true) {
-                                return SizedBox();
-                                // return SizedBox(height: MediaQuery
-                                //     .paddingOf(context)
-                                //     .bottom,);
+                                return SizedBox(height: MediaQuery
+                                    .paddingOf(context)
+                                    .bottom,);
                               }
                               return value
                                   ? MultiSelectPanel(

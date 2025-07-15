@@ -30,13 +30,21 @@ class TIMUIKitSearchMsgDetail extends StatefulWidget {
 
   final bool? isAutoFocus;
 
+  final String Function(V2TimMessage?)? onConvertType;
+  final String Function(V2TimMessage?)? onLocationConvertType;
+
+  final Widget? prefixIcon;
+
   const TIMUIKitSearchMsgDetail(
       {Key? key,
       this.isAutoFocus = true,
       required this.currentConversation,
       required this.keyword,
       required this.onTapConversation,
-      this.initMessageList})
+      this.initMessageList,
+      this.onConvertType,
+      this.onLocationConvertType,
+      this.prefixIcon})
       : super(key: key);
 
   @override
@@ -92,6 +100,20 @@ class TIMUIKitSearchMsgDetailState
     }
     switch (msgType) {
       case MessageElemType.V2TIM_ELEM_TYPE_CUSTOM:
+        var type = widget.onConvertType?.call(message);
+        if (type == "audio") {
+          return TIM_t("[语音通话]");
+        }
+        if (type == "video") {
+          return TIM_t("[视频通话]");
+        }
+        if (type == "location") {
+          var location = widget.onLocationConvertType?.call(message);
+          return "${TIM_t("[位置]")}${location}";
+        }
+        if (type == "tips") {
+          return TIM_t("[提醒]");
+        }
         return TIM_t("[自定义]");
       case MessageElemType.V2TIM_ELEM_TYPE_SOUND:
         return TIM_t("[语音]");
@@ -250,7 +272,7 @@ class TIMUIKitSearchMsgDetailState
                   updateMsgResult(value, true);
                 },
                 initValue: widget.keyword,
-                prefixIcon: Icon(
+                prefixIcon: widget.prefixIcon ?? Icon(
                   Icons.search,
                   size: 16,
                   color: hexToColor("979797"),

@@ -11,8 +11,13 @@ class AddFriendLifeCycle {
 
   void Function(String userID)? sendApplyMessage;
 
+  void Function()? showLoading;
+  void Function()? dissmissLoading;
+
   AddFriendLifeCycle({
     this.shouldAddFriend = DefaultLifeCycle.defaultAddFriend,
     this.sendApplyMessage,
+    this.showLoading,
+    this.dissmissLoading,
   });
 }

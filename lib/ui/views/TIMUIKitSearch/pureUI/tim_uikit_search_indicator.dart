@@ -93,13 +93,13 @@ class TIMUIKitSearchIndicator extends TIMUIKitStatelessWidget {
           const SizedBox(height: 1),
           Divider(thickness: 0.8, color: theme.weakDividerColor),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             mainAxisSize: MainAxisSize.max,
             children: [
               renderItemBox(Icons.person, SearchType.contact,
                   typeList.contains(SearchType.contact), theme),
-              renderItemBox(Icons.people, SearchType.group,
-                  typeList.contains(SearchType.group), theme),
+              // renderItemBox(Icons.people, SearchType.group,
+              //     typeList.contains(SearchType.group), theme),
               renderItemBox(Icons.message, SearchType.history,
                   typeList.contains(SearchType.history), theme),
             ],
