@@ -136,7 +136,7 @@ class TIMUIKitSearchInputState extends TIMUIKitState<TIMUIKitSearchInput> {
                 },
                 child: Text(TIM_t("取消"),
                     style: const TextStyle(
-                      color: Colors.blueAccent,
+                      color: const Color(0xFF07C160),
                     )),
               ))
         ],

@@ -204,7 +204,10 @@ class TIMUIKitConversationItem extends TIMUIKitStatelessWidget {
             ],
           ),
         ),
-        Divider(color: Color(0xFFE5E5E5), height: 0.5, indent: 76,),
+        Container(
+          color: isPined ? theme.conversationItemPinedBgColor : theme.conversationItemBgColor,
+          child: Divider(color: isPined ? Color(0xFFD6D6D6) : Color(0xFFE2E2E2), height: 0.5, indent: 76,),
+        ),
       ],
     );
   }

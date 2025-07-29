@@ -86,6 +86,8 @@ class TIMUIKitHistoryMessageList extends StatefulWidget {
 
   final V2TimConversation conversation;
 
+  final bool? isAdministrator;
+
   const TIMUIKitHistoryMessageList(
       {Key? key,
       required this.model,
@@ -98,7 +100,8 @@ class TIMUIKitHistoryMessageList extends StatefulWidget {
       this.initFindingMsg,
       this.isAllowScroll = true,
       this.mainHistoryListConfig,
-      required this.conversation})
+      required this.conversation,
+      this.isAdministrator = false})
       : super(key: key);
 
   @override
@@ -360,6 +363,7 @@ class _TIMUIKitHistoryMessageListState extends TIMUIKitState<TIMUIKitHistoryMess
               shrinkWrap: !shouldShowUnreadMessage,
               controller: _autoScrollController,
               slivers: [
+                SliverPadding(padding: EdgeInsets.only(top:widget.isAdministrator == true? MediaQuery.paddingOf(context).bottom+20:0)),
                 SliverPadding(
                   padding: widget.mainHistoryListConfig?.padding ?? EdgeInsets.zero,
                   sliver: SliverList(

@@ -531,6 +531,7 @@ class _TUIChatState extends TIMUIKitState<TIMUIKitChat> {
                                     child: Listener(
                                       onPointerMove: closePanel,
                                       child: TIMUIKitHistoryMessageListContainer(
+                                        isAdministrator: widget.isAdministrator,
                                         onTranslate: widget.onTranslate,
                                         customMessageHoverBarOnDesktop: widget
                                             .customMessageHoverBarOnDesktop,
@@ -580,9 +581,10 @@ class _TUIChatState extends TIMUIKitState<TIMUIKitChat> {
                           Selector<TUIChatSeparateViewModel, bool>(
                             builder: (context, value, child) {
                               if (widget.isAdministrator == true) {
-                                return SizedBox(height: MediaQuery
-                                    .paddingOf(context)
-                                    .bottom,);
+                                return SizedBox();
+                                // return Container(height: MediaQuery
+                                //     .paddingOf(context)
+                                //     .bottom+20,color: theme.chatBgColor.alpha,);
                               }
                               return value
                                   ? MultiSelectPanel(

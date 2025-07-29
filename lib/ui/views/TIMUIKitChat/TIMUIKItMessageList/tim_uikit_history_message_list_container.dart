@@ -89,6 +89,9 @@ class TIMUIKitHistoryMessageListContainer extends StatefulWidget {
   /// 翻译
   final OnTranslate? onTranslate;
 
+  /// 是否管理员账号
+  final bool? isAdministrator;
+
   const TIMUIKitHistoryMessageListContainer({
     Key? key,
     this.itemBuilder,
@@ -116,6 +119,7 @@ class TIMUIKitHistoryMessageListContainer extends StatefulWidget {
     this.groupMemberInfo,
     this.customMessageHoverBarOnDesktop,
     this.onTranslate,
+    this.isAdministrator = false,
   }) : super(key: key);
 
   @override
@@ -169,6 +173,7 @@ class _TIMUIKitHistoryMessageListContainerState
       conversationID: model.conversationID,
       builder: (context, messageList, child) {
         return TIMUIKitHistoryMessageList(
+          isAdministrator: widget.isAdministrator,
           conversation: widget.conversation,
           model: model,
           isAllowScroll: widget.isAllowScroll,
