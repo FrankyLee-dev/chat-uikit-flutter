@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tencent_chat_i18n_tool/tencent_chat_i18n_tool.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_friend_application.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_friend_application.dart';
 import 'package:tencent_cloud_chat_uikit/base_widgets/tim_ui_kit_state.dart';
 import 'package:tencent_cloud_chat_uikit/business_logic/life_cycle/new_contact_life_cycle.dart';
 import 'package:tencent_cloud_chat_uikit/business_logic/view_models/tui_friendship_view_model.dart';
@@ -8,9 +11,10 @@ import 'package:tencent_cloud_chat_uikit/tencent_cloud_chat_uikit.dart';
 import 'package:tencent_cloud_chat_uikit/ui/utils/screen_utils.dart';
 import 'package:tencent_cloud_chat_uikit/base_widgets/tim_ui_kit_base.dart';
 import 'package:tencent_cloud_chat_uikit/ui/widgets/avatar.dart';
+import 'package:tencent_cloud_chat_uikit/theme/color.dart';
+import 'package:tencent_cloud_chat_uikit/theme/tui_theme_view_model.dart';
 
-typedef NewContactItemBuilder = Widget Function(
-    BuildContext context, V2TimFriendApplication applicationInfo);
+typedef NewContactItemBuilder = Widget Function(BuildContext context, V2TimFriendApplication applicationInfo);
 
 class TIMUIKitNewContact extends StatefulWidget {
   /// the callback when accept friend request
@@ -48,30 +52,22 @@ class _TIMUIKitNewContactState extends TIMUIKitState<TIMUIKitNewContact> {
   late TUIFriendShipViewModel model = serviceLocator<TUIFriendShipViewModel>();
 
   _getShowName(V2TimFriendApplication item) {
-    return TencentUtils.checkString(item.nickname) ??
-        TencentUtils.checkString(item.userID);
+    return TencentUtils.checkString(item.nickname) ?? TencentUtils.checkString(item.userID);
   }
 
-  Widget _itemBuilder(BuildContext context,
-      V2TimFriendApplication applicationInfo) {
-    final theme = Provider
-        .of<TUIThemeViewModel>(context)
-        .theme;
+  Widget _itemBuilder(BuildContext context, V2TimFriendApplication applicationInfo) {
+    final theme = Provider.of<TUIThemeViewModel>(context).theme;
     final showName = _getShowName(applicationInfo);
     final faceUrl = applicationInfo.faceUrl ?? "";
     final applicationText = applicationInfo.addWording ?? "";
-    final isDesktopScreen =
-        TUIKitScreenUtils.getFormFactor(context) == DeviceType.Desktop;
+    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) == DeviceType.Desktop;
 
     return Material(
       color: theme.wideBackgroundColor,
       child: InkWell(
         onTap: () {},
         child: Container(
-          padding: EdgeInsets.only(
-              top: isDesktopScreen ? 6 : 10,
-              left: 16,
-              right: isDesktopScreen ? 16 : 0),
+          padding: EdgeInsets.only(top: isDesktopScreen ? 6 : 10, left: 16, right: isDesktopScreen ? 16 : 0),
           child: Row(
             children: [
               Container(
@@ -229,7 +225,7 @@ class _TIMUIKitNewContactState extends TIMUIKitState<TIMUIKitNewContact> {
           if (newContactList != null && newContactList.isNotEmpty) {
             return ListView.builder(
               shrinkWrap: true,
-              padding: EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.only(top: 10),
               itemCount: newContactList.length,
               itemBuilder: (context, index) {
                 final friendInfo = newContactList[index]!;

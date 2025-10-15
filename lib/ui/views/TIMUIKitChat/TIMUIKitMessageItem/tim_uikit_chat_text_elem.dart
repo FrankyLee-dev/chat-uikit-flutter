@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
 import 'package:tencent_cloud_chat_uikit/ui/utils/screen_utils.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
@@ -24,22 +26,21 @@ class TIMUIKitTextElem extends StatefulWidget {
   final EdgeInsetsGeometry? textPadding;
   final TUIChatSeparateViewModel chatModel;
   final bool? isShowMessageReaction;
-  final bool isUseDefaultEmoji;
   final List<CustomEmojiFaceData> customEmojiStickerList;
 
-  const TIMUIKitTextElem({Key? key,
-    required this.message,
-    required this.isFromSelf,
-    required this.isShowJump,
-    required this.clearJump,
-    this.fontStyle,
-    this.borderRadius,
-    this.isShowMessageReaction,
-    this.backgroundColor,
-    this.textPadding,
-    required this.chatModel,
-    this.isUseDefaultEmoji = false,
-    this.customEmojiStickerList = const []})
+  const TIMUIKitTextElem(
+      {Key? key,
+      required this.message,
+      required this.isFromSelf,
+      required this.isShowJump,
+      required this.clearJump,
+      this.fontStyle,
+      this.borderRadius,
+      this.isShowMessageReaction,
+      this.backgroundColor,
+      this.textPadding,
+      required this.chatModel,
+      this.customEmojiStickerList = const []})
       : super(key: key);
 
   @override
@@ -66,8 +67,7 @@ class _TIMUIKitTextElemState extends TIMUIKitState<TIMUIKitTextElem> {
   }
 
   _showJumpColor() {
-    if ((widget.chatModel.jumpMsgID != widget.message.msgID) &&
-        (widget.message.msgID?.isNotEmpty ?? true)) {
+    if ((widget.chatModel.jumpMsgID != widget.message.msgID) && (widget.message.msgID?.isNotEmpty ?? true)) {
       return;
     }
     isShining = true;
@@ -94,16 +94,13 @@ class _TIMUIKitTextElemState extends TIMUIKitState<TIMUIKitTextElem> {
 
   // get the link preview info
   _getLinkPreview() {
-    if (widget.chatModel.chatConfig.urlPreviewType !=
-        UrlPreviewType.previewCardAndHyperlink) {
+    if (widget.chatModel.chatConfig.urlPreviewType != UrlPreviewType.previewCardAndHyperlink) {
       return;
     }
     try {
-      if (widget.message.localCustomData != null &&
-          widget.message.localCustomData!.isNotEmpty) {
+      if (widget.message.localCustomData != null && widget.message.localCustomData!.isNotEmpty) {
         final String localJSON = widget.message.localCustomData!;
-        final LocalCustomDataModel? localPreviewInfo =
-        LocalCustomDataModel.fromMap(json.decode(localJSON));
+        final LocalCustomDataModel? localPreviewInfo = LocalCustomDataModel.fromMap(json.decode(localJSON));
         // If [localCustomData] is not empty, check if the link preview info exists
         if (localPreviewInfo == null || localPreviewInfo.isLinkPreviewEmpty()) {
           // If not exists, get it
@@ -124,27 +121,23 @@ class _TIMUIKitTextElemState extends TIMUIKitState<TIMUIKitTextElem> {
     LinkPreviewEntry.getFirstLinkPreviewContent(
         message: widget.message,
         onUpdateMessage: (message) {
-          widget.chatModel.updateMessageFromController(
-              msgID: widget.message.msgID!, message: message);
+          widget.chatModel.updateMessageFromController(msgID: widget.message.msgID!, message: message);
         });
   }
 
   Widget? _renderPreviewWidget() {
     // If the link preview info from [localCustomData] is available, use it to render the preview card.
     // Otherwise, it will returns null.
-    if (widget.message.localCustomData != null &&
-        widget.message.localCustomData!.isNotEmpty) {
+    if (widget.message.localCustomData != null && widget.message.localCustomData!.isNotEmpty) {
       try {
         final String localJSON = widget.message.localCustomData!;
-        final LocalCustomDataModel? localPreviewInfo =
-        LocalCustomDataModel.fromMap(json.decode(localJSON));
-        if (localPreviewInfo != null &&
-            !localPreviewInfo.isLinkPreviewEmpty()) {
+        final LocalCustomDataModel? localPreviewInfo = LocalCustomDataModel.fromMap(json.decode(localJSON));
+        if (localPreviewInfo != null && !localPreviewInfo.isLinkPreviewEmpty()) {
           return Container(
             margin: const EdgeInsets.only(top: 8),
             child:
-            // You can use this default widget [LinkPreviewWidget] to render preview card, or you can use custom widget.
-            LinkPreviewWidget(linkPreview: localPreviewInfo),
+                // You can use this default widget [LinkPreviewWidget] to render preview card, or you can use custom widget.
+                LinkPreviewWidget(linkPreview: localPreviewInfo),
           );
         } else {
           return null;
@@ -160,34 +153,28 @@ class _TIMUIKitTextElemState extends TIMUIKitState<TIMUIKitTextElem> {
   @override
   Widget tuiBuild(BuildContext context, TUIKitBuildValue value) {
     final theme = value.theme;
-    final isDesktopScreen =
-        TUIKitScreenUtils.getFormFactor(context) == DeviceType.Desktop;
+    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) == DeviceType.Desktop;
     final textWithLink = LinkPreviewEntry.getHyperlinksText(
-        widget.message.textElem?.text ?? "",
-        widget.chatModel.chatConfig.isSupportMarkdownForTextMessage,
+        widget.message.textElem?.text ?? "", widget.chatModel.chatConfig.isSupportMarkdownForTextMessage,
         onLinkTap: widget.chatModel.chatConfig.onTapLink,
-        enableLink: widget.chatModel.chatConfig.enableLink,
-        isUseQQPackage: (widget.chatModel.chatConfig.stickerPanelConfig
-            ?.useTencentCloudChatStickerPackage ??
-            true) ||
-            widget.isUseDefaultEmoji,
-        isUseTencentCloudChatPackage: widget.chatModel.chatConfig
-            .stickerPanelConfig?.useTencentCloudChatStickerPackage ??
-            true,
+        isUseQQPackage: widget.chatModel.chatConfig.stickerPanelConfig?.useQQStickerPackage ?? true,
+        isUseTencentCloudChatPackage:
+            widget.chatModel.chatConfig.stickerPanelConfig?.useTencentCloudChatStickerPackage ?? true,
+        isUseTencentCloudChatPackageOldKeys:
+            widget.chatModel.chatConfig.stickerPanelConfig?.useTencentCloudChatStickerPackageOldKeys ?? false,
         customEmojiStickerList: widget.customEmojiStickerList,
-        isEnableTextSelection:
-        widget.chatModel.chatConfig.isEnableTextSelection ?? false);
+        isEnableTextSelection: widget.chatModel.chatConfig.isEnableTextSelection ?? false);
     final borderRadius = widget.isFromSelf
         ? const BorderRadius.only(
-        topLeft: Radius.circular(10),
-        topRight: Radius.circular(2),
-        bottomLeft: Radius.circular(10),
-        bottomRight: Radius.circular(10))
+            topLeft: Radius.circular(10),
+            topRight: Radius.circular(2),
+            bottomLeft: Radius.circular(10),
+            bottomRight: Radius.circular(10))
         : const BorderRadius.only(
-        topLeft: Radius.circular(2),
-        topRight: Radius.circular(10),
-        bottomLeft: Radius.circular(10),
-        bottomRight: Radius.circular(10));
+            topLeft: Radius.circular(2),
+            topRight: Radius.circular(10),
+            bottomLeft: Radius.circular(10),
+            bottomRight: Radius.circular(10));
     if ((widget.chatModel.jumpMsgID == widget.message.msgID)) {}
     if (widget.isShowJump) {
       if (!isShining) {
@@ -195,21 +182,18 @@ class _TIMUIKitTextElemState extends TIMUIKitState<TIMUIKitTextElem> {
           _showJumpColor();
         });
       } else {
-        if ((widget.chatModel.jumpMsgID == widget.message.msgID) &&
-            (widget.message.msgID?.isNotEmpty ?? false)) {
+        if ((widget.chatModel.jumpMsgID == widget.message.msgID) && (widget.message.msgID?.isNotEmpty ?? false)) {
           widget.clearJump();
         }
       }
     }
 
     final defaultStyle = widget.isFromSelf
-        ? (theme.chatMessageItemFromSelfBgColor ??
-        theme.lightPrimaryMaterialColor.shade50)
+        ? (theme.chatMessageItemFromSelfBgColor ?? theme.lightPrimaryMaterialColor.shade50)
         : (theme.chatMessageItemFromOthersBgColor);
 
-    final backgroundColor = isShowJumpState
-        ? const Color.fromRGBO(245, 166, 35, 1)
-        : (defaultStyle ?? widget.backgroundColor);
+    final backgroundColor =
+        isShowJumpState ? const Color.fromRGBO(245, 166, 35, 1) : (defaultStyle ?? widget.backgroundColor);
 
     return Container(
       padding: widget.textPadding ?? EdgeInsets.all(isDesktopScreen ? 12 : 10),
@@ -217,11 +201,7 @@ class _TIMUIKitTextElemState extends TIMUIKitState<TIMUIKitTextElem> {
         color: backgroundColor,
         borderRadius: widget.borderRadius ?? borderRadius,
       ),
-      constraints:
-      BoxConstraints(maxWidth: MediaQuery
-          .of(context)
-          .size
-          .width * 0.6),
+      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -229,41 +209,31 @@ class _TIMUIKitTextElemState extends TIMUIKitState<TIMUIKitTextElem> {
           // You can render the widget from extension directly, with a [TextStyle] optionally.
           widget.chatModel.chatConfig.urlPreviewType != UrlPreviewType.none
               ? textWithLink!(
-              style: widget.fontStyle ??
-                  TextStyle(
-                      fontSize: isDesktopScreen ? 14 : 16,
-                      textBaseline: TextBaseline.ideographic,
-                      height: widget.chatModel.chatConfig.textHeight))
+                  style: widget.fontStyle ??
+                      TextStyle(
+                          fontSize: isDesktopScreen ? 14 : 16,
+                          textBaseline: TextBaseline.ideographic,
+                          height: widget.chatModel.chatConfig.textHeight))
               : ExtendedText(widget.message.textElem?.text ?? "",
-              softWrap: true,
-              style: widget.fontStyle ??
-                  TextStyle(
-                      fontSize: isDesktopScreen ? 14 : 16,
-                      height: widget.chatModel.chatConfig.textHeight),
-              specialTextSpanBuilder: DefaultSpecialTextSpanBuilder(
-                isUseQQPackage: (widget
-                    .chatModel
-                    .chatConfig
-                    .stickerPanelConfig
-                    ?.useTencentCloudChatStickerPackage ??
-                    true) ||
-                    widget.isUseDefaultEmoji,
-                isUseTencentCloudChatPackage: widget
-                    .chatModel
-                    .chatConfig
-                    .stickerPanelConfig
-                    ?.useTencentCloudChatStickerPackage ??
-                    true,
-                customEmojiStickerList: widget.customEmojiStickerList,
-                showAtBackground: true,
-              )),
+                  softWrap: true,
+                  style: widget.fontStyle ??
+                      TextStyle(fontSize: isDesktopScreen ? 14 : 16, height: widget.chatModel.chatConfig.textHeight),
+                  specialTextSpanBuilder: DefaultSpecialTextSpanBuilder(
+                    isUseQQPackage: widget.chatModel.chatConfig.stickerPanelConfig?.useQQStickerPackage ?? true,
+                    isUseTencentCloudChatPackage:
+                        widget.chatModel.chatConfig.stickerPanelConfig?.useTencentCloudChatStickerPackage ?? true,
+                    isUseTencentCloudChatPackageOldKeys:
+                        widget.chatModel.chatConfig.stickerPanelConfig?.useTencentCloudChatStickerPackageOldKeys ??
+                            false,
+                    customEmojiStickerList: widget.customEmojiStickerList,
+                    showAtBackground: true,
+                    checkHttpLink: true,
+                  )),
           // If the link preview info is available, render the preview card.
           if (_renderPreviewWidget() != null &&
-              widget.chatModel.chatConfig.urlPreviewType ==
-                  UrlPreviewType.previewCardAndHyperlink)
+              widget.chatModel.chatConfig.urlPreviewType == UrlPreviewType.previewCardAndHyperlink)
             _renderPreviewWidget()!,
-          if (widget.isShowMessageReaction ?? true)
-            TIMUIKitMessageReactionShowPanel(message: widget.message)
+          if (widget.isShowMessageReaction ?? true) TIMUIKitMessageReactionShowPanel(message: widget.message)
         ],
       ),
     );

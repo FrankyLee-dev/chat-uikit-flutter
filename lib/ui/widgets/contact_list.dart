@@ -1,23 +1,29 @@
 import 'package:azlistview_all_platforms/azlistview_all_platforms.dart';
 import 'package:flutter/material.dart';
 import 'package:lpinyin/lpinyin.dart';
+import 'package:tencent_chat_i18n_tool/tencent_chat_i18n_tool.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_friend_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_friend_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_group_member_full_info.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_group_member_full_info.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_user_status.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_user_status.dart';
 import 'package:tencent_cloud_chat_uikit/ui/utils/screen_utils.dart';
-import 'package:tencent_im_base/tencent_im_base.dart';
 import 'package:tencent_cloud_chat_uikit/base_widgets/tim_ui_kit_state.dart';
 import 'package:tencent_cloud_chat_uikit/business_logic/view_models/tui_friendship_view_model.dart';
 import 'package:tencent_cloud_chat_uikit/data_services/services_locatar.dart';
-
 import 'package:tencent_cloud_chat_uikit/ui/widgets/avatar.dart';
 import 'package:tencent_cloud_chat_uikit/ui/widgets/az_list_view.dart';
 import 'package:tencent_cloud_chat_uikit/ui/widgets/radio_button.dart';
 import 'package:tencent_cloud_chat_uikit/base_widgets/tim_ui_kit_base.dart';
+import 'package:tencent_cloud_chat_uikit/theme/color.dart';
+import 'package:tencent_cloud_chat_uikit/theme/tui_theme.dart';
 
 class ContactList extends StatefulWidget {
   final List<V2TimFriendInfo> contactList;
   final bool isCanSelectMemberItem;
   final bool isCanSlidableDelete;
-  final Function(List<V2TimFriendInfo> selectedMember)?
-  onSelectedMemberItemChange;
+  final Function(List<V2TimFriendInfo> selectedMember)? onSelectedMemberItemChange;
   final Function()? handleSlidableDelte;
   final Color? bgColor;
 
@@ -66,8 +72,7 @@ class ContactList extends StatefulWidget {
 
 class _ContactListState extends TIMUIKitState<ContactList> {
   List<V2TimFriendInfo> selectedMember = [];
-  final TUIFriendShipViewModel friendShipViewModel =
-  serviceLocator<TUIFriendShipViewModel>();
+  final TUIFriendShipViewModel friendShipViewModel = serviceLocator<TUIFriendShipViewModel>();
 
   _getShowName(V2TimFriendInfo item) {
     final friendRemark = item.friendRemark ?? "";
@@ -115,26 +120,21 @@ class _ContactListState extends TIMUIKitState<ContactList> {
     final lNationFlag = userCustomInfo?['NFlag'] ?? "";
 
     final V2TimUserStatus? onlineStatus = widget.isShowOnlineStatus
-        ? friendShipViewModel.userStatusList.firstWhere(
-            (element) => element.userID == item.userID,
-        orElse: () => V2TimUserStatus(statusType: 0))
+        ? friendShipViewModel.userStatusList
+            .firstWhere((element) => element.userID == item.userID, orElse: () => V2TimUserStatus(statusType: 0))
         : null;
 
     bool disabled = false;
     if (widget.groupMemberList != null && widget.groupMemberList!.isNotEmpty) {
-      disabled = ((widget.groupMemberList
-          ?.indexWhere((element) => element?.userID == item.userID)) ??
-          -1) >
-          -1;
+      disabled = ((widget.groupMemberList?.indexWhere((element) => element?.userID == item.userID)) ?? -1) > -1;
     }
 
-    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) ==
-        DeviceType.Desktop;
+    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) == DeviceType.Desktop;
 
     return Column(
       children: [
         Container(
-          color: Color(0xFFFEFEFE),
+          color: const Color(0xFFFEFEFE),
           padding: const EdgeInsets.only(top: 8, left: 16, right: 25),
           child: Row(
             children: [
@@ -187,7 +187,7 @@ class _ContactListState extends TIMUIKitState<ContactList> {
                         width: 14.93,
                         height: 10.83,
                         errorBuilder: (context, o, s) {
-                          return SizedBox();
+                          return const SizedBox();
                         },
                       ),
                     ),
@@ -216,11 +216,11 @@ class _ContactListState extends TIMUIKitState<ContactList> {
                     Row(
                       children: [
                         Text("${TIM_t("上次登录：")}${lLTime.split(" ")?[0]}",
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 9, color: Color(0xFFB9BFCB),),)
                       ],
                     ),
-                  SizedBox(height: 5,),
+                  const SizedBox(height: 5,),
                   if (lCountry != null && lCity != null)
                     Row(
                       children: [
@@ -231,9 +231,9 @@ class _ContactListState extends TIMUIKitState<ContactList> {
                           errorBuilder: (context, o, s) {
                             return Container();
                           },),
-                        SizedBox(width: 3,),
+                        const SizedBox(width: 3,),
                         Text("$lCountry-$lCity",
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 9, color: Color(0xFFAFB5C0),),),
                       ],
                     ),
@@ -242,7 +242,7 @@ class _ContactListState extends TIMUIKitState<ContactList> {
             ],
           ),
         ),
-        Divider(color: Color(0xFFE8E8E8),
+        Divider(color: const Color(0xFFE8E8E8),
           height: 0.8,
           indent: isDesktopScreen ? 58 : 68,),
       ],
@@ -256,13 +256,13 @@ class _ContactListState extends TIMUIKitState<ContactList> {
           .of(context)
           .size
           .width,
-      padding: EdgeInsets.only(left: 18),
-      color: Color(0xFFF7F7F7),
+      padding: const EdgeInsets.only(left: 18),
+      color: const Color(0xFFF7F7F7),
       alignment: Alignment.centerLeft,
       child: Text(
         tag,
         softWrap: false,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 12,
           color: Color(0xFF999999),
         ),
@@ -271,8 +271,7 @@ class _ContactListState extends TIMUIKitState<ContactList> {
   }
 
   Widget generateTopItem(memberInfo) {
-    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) ==
-        DeviceType.Desktop;
+    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) == DeviceType.Desktop;
     if (widget.topListItemBuilder != null) {
       final customWidget = widget.topListItemBuilder!(memberInfo);
       if (customWidget != null) {
@@ -287,8 +286,7 @@ class _ContactListState extends TIMUIKitState<ContactList> {
         },
         child: Container(
           padding: const EdgeInsets.only(top: 8, left: 16),
-          decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: hexToColor("DBDBDB")))),
+          decoration: BoxDecoration(border: Border(bottom: BorderSide(color: hexToColor("DBDBDB")))),
           child: Row(
             children: [
               Container(
@@ -299,29 +297,27 @@ class _ContactListState extends TIMUIKitState<ContactList> {
               ),
               Expanded(
                   child: Container(
-                    padding: const EdgeInsets.only(top: 10, bottom: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          memberInfo.name,
-                          style: TextStyle(
-                              color: hexToColor("111111"),
-                              fontSize: isDesktopScreen ? 14 : 18),
-                        ),
-                        Expanded(child: Container()),
-                        // if (item.id == "newContact")
-                        //   const TIMUIKitUnreadCount(),
-                        Container(
-                          margin: const EdgeInsets.only(right: 16),
-                          child: Icon(
-                            Icons.keyboard_arrow_right,
-                            color: hexToColor('BBBBBB'),
-                          ),
-                        )
-                      ],
+                padding: const EdgeInsets.only(top: 10, bottom: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      memberInfo.name,
+                      style: TextStyle(color: hexToColor("111111"), fontSize: isDesktopScreen ? 14 : 18),
                     ),
-                  ))
+                    Expanded(child: Container()),
+                    // if (item.id == "newContact")
+                    //   const TIMUIKitUnreadCount(),
+                    Container(
+                      margin: const EdgeInsets.only(right: 16),
+                      child: Icon(
+                        Icons.keyboard_arrow_right,
+                        color: hexToColor('BBBBBB'),
+                      ),
+                    )
+                  ],
+                ),
+              ))
             ],
           ),
         ));
@@ -332,13 +328,10 @@ class _ContactListState extends TIMUIKitState<ContactList> {
     final TUITheme theme = value.theme;
 
     final showList = _getShowList(widget.contactList);
-    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) ==
-        DeviceType.Desktop;
+    final isDesktopScreen = TUIKitScreenUtils.getFormFactor(context) == DeviceType.Desktop;
 
     if (widget.topList != null && widget.topList!.isNotEmpty) {
-      final topList = widget.topList!
-          .map((e) => ISuspensionBeanImpl(memberInfo: e, tagIndex: '@'))
-          .toList();
+      final topList = widget.topList!.map((e) => ISuspensionBeanImpl(memberInfo: e, tagIndex: '@')).toList();
       showList.insertAll(0, topList);
     }
 
@@ -346,10 +339,7 @@ class _ContactListState extends TIMUIKitState<ContactList> {
       return Column(
         children: [
           ...showList.map((e) => generateTopItem(e.memberInfo)).toList(),
-          Expanded(
-              child: widget.emptyBuilder != null
-                  ? widget.emptyBuilder!(context)
-                  : Container())
+          Expanded(child: widget.emptyBuilder != null ? widget.emptyBuilder!(context) : Container())
         ],
       );
     }
@@ -371,8 +361,8 @@ class _ContactListState extends TIMUIKitState<ContactList> {
           return Material(
             color: (isDesktopScreen)
                 ? (widget.currentItem == memberInfo.userProfile.userID
-                ? theme.conversationItemChooseBgColor
-                : widget.bgColor)
+                    ? theme.conversationItemChooseBgColor
+                    : widget.bgColor)
                 : null,
             child: InkWell(
               onTap: () {

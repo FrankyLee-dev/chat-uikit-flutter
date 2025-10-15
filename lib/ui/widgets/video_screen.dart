@@ -2,13 +2,19 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:chewie/chewie.dart';
 import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
+import 'package:tencent_chat_i18n_tool/tencent_chat_i18n_tool.dart';
+import 'package:tencent_cloud_chat_sdk/enum/message_status.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_message.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_message.dart';
+import 'package:tencent_cloud_chat_sdk/models/v2_tim_video_elem.dart'
+    if (dart.library.html) 'package:tencent_cloud_chat_sdk/web/compatible_models/v2_tim_video_elem.dart';
+import 'package:tencent_cloud_chat_uikit/base_widgets/tim_callback.dart';
 import 'package:tencent_cloud_chat_uikit/base_widgets/tim_ui_kit_base.dart';
 import 'package:tencent_cloud_chat_uikit/base_widgets/tim_ui_kit_state.dart';
 import 'package:tencent_cloud_chat_uikit/business_logic/view_models/tui_chat_global_model.dart';
@@ -16,12 +22,12 @@ import 'package:tencent_cloud_chat_uikit/data_services/services_locatar.dart';
 import 'package:tencent_cloud_chat_uikit/tencent_cloud_chat_uikit.dart';
 import 'package:tencent_cloud_chat_uikit/ui/utils/permission.dart';
 import 'package:tencent_cloud_chat_uikit/ui/utils/platform.dart';
-import 'package:tencent_cloud_chat_uikit/ui/widgets/video_custom_control.dart';
+import 'package:tencent_cloud_chat_uikit/ui/views/TIMUIKitChat/TIMUIKITMessageItem/tim_uikit_chat_videoplayer.dart';
 import 'package:universal_html/html.dart' as html;
-import 'package:video_player/video_player.dart';
 
 class VideoScreen extends StatefulWidget {
-  const VideoScreen({required this.message, required this.heroTag, required this.videoElement, Key? key}) : super(key: key);
+  const VideoScreen({required this.message, required this.heroTag, required this.videoElement, Key? key})
+      : super(key: key);
 
   final V2TimMessage message;
   final dynamic heroTag;
@@ -32,16 +38,12 @@ class VideoScreen extends StatefulWidget {
 }
 
 class _VideoScreenState extends TIMUIKitState<VideoScreen> {
-  late VideoPlayerController videoPlayerController;
-  late ChewieController chewieController;
   GlobalKey<ExtendedImageSlidePageState> slidePagekey = GlobalKey<ExtendedImageSlidePageState>();
   final TUIChatGlobalModel model = serviceLocator<TUIChatGlobalModel>();
-  bool isInit = false;
 
   @override
   initState() {
     super.initState();
-    setVideoPlayerController();
     // 允许横屏
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
@@ -117,27 +119,32 @@ class _VideoScreenState extends TIMUIKitState<VideoScreen> {
         }
         File f = File(savePath);
         if (f.existsSync()) {
-          var result = await ImageGallerySaver.saveFile(savePath);
+          var result = await ImageGallerySaverPlus.saveFile(savePath);
           if (PlatformUtils().isIOS) {
             if (result['isSuccess']) {
-              onTIMCallback(TIMCallback(type: TIMCallbackType.INFO, infoRecommendText: TIM_t("视频保存成功"), infoCode: 6660402));
+              onTIMCallback(
+                  TIMCallback(type: TIMCallbackType.INFO, infoRecommendText: TIM_t("视频保存成功"), infoCode: 6660402));
             } else {
-              onTIMCallback(TIMCallback(type: TIMCallbackType.INFO, infoRecommendText: TIM_t("视频保存失败"), infoCode: 6660403));
+              onTIMCallback(
+                  TIMCallback(type: TIMCallbackType.INFO, infoRecommendText: TIM_t("视频保存失败"), infoCode: 6660403));
             }
           } else {
             if (result != null) {
-              onTIMCallback(TIMCallback(type: TIMCallbackType.INFO, infoRecommendText: TIM_t("视频保存成功"), infoCode: 6660402));
+              onTIMCallback(
+                  TIMCallback(type: TIMCallbackType.INFO, infoRecommendText: TIM_t("视频保存成功"), infoCode: 6660402));
             } else {
-              onTIMCallback(TIMCallback(type: TIMCallbackType.INFO, infoRecommendText: TIM_t("视频保存失败"), infoCode: 6660403));
+              onTIMCallback(
+                  TIMCallback(type: TIMCallbackType.INFO, infoRecommendText: TIM_t("视频保存失败"), infoCode: 6660403));
             }
           }
         }
       } else {
-        onTIMCallback(TIMCallback(type: TIMCallbackType.INFO, infoRecommendText: TIM_t("the message is downloading"), infoCode: -1));
+        onTIMCallback(TIMCallback(
+            type: TIMCallbackType.INFO, infoRecommendText: TIM_t("the message is downloading"), infoCode: -1));
       }
       return;
     }
-    var result = await ImageGallerySaver.saveFile(savePath);
+    var result = await ImageGallerySaverPlus.saveFile(savePath);
     if (PlatformUtils().isIOS) {
       if (result['isSuccess']) {
         onTIMCallback(TIMCallback(type: TIMCallbackType.INFO, infoRecommendText: TIM_t("视频保存成功"), infoCode: 6660402));
@@ -162,7 +169,9 @@ class _VideoScreenState extends TIMUIKitState<VideoScreen> {
         isAsset: true,
       );
     }
-    if (widget.videoElement.videoPath != '' && widget.videoElement.videoPath != null) {
+    if (widget.videoElement.videoPath != '' &&
+        widget.videoElement.videoPath != null &&
+        File(widget.videoElement.videoPath!).existsSync()) {
       File f = File(widget.videoElement.videoPath!);
       if (f.existsSync()) {
         return await _saveNetworkVideo(
@@ -209,77 +218,11 @@ class _VideoScreenState extends TIMUIKitState<VideoScreen> {
     return width;
   }
 
-  setVideoPlayerController() async {
-    if (!PlatformUtils().isWeb) {
-      if (TencentUtils.checkString(widget.message.msgID) != null && widget.videoElement.localVideoUrl == null) {
-        String savePath = model.getFileMessageLocation(widget.message.msgID);
-        File f = File(savePath);
-        if (f.existsSync()) {
-          widget.videoElement.localVideoUrl = savePath;
-        }
-      }
-    }
-
-    VideoPlayerController player = PlatformUtils().isWeb
-        ? ((TencentUtils.checkString(widget.videoElement.videoPath) != null) || widget.message.status == MessageStatus.V2TIM_MSG_STATUS_SENDING
-            ? VideoPlayerController.networkUrl(
-                Uri.parse(widget.videoElement.videoPath!),
-              )
-            : (TencentUtils.checkString(widget.videoElement.localVideoUrl) == null)
-                ? VideoPlayerController.networkUrl(
-                    Uri.parse(widget.videoElement.videoUrl!),
-                  )
-                : VideoPlayerController.networkUrl(
-                    Uri.parse(widget.videoElement.localVideoUrl!),
-                  ))
-        : (TencentUtils.checkString(widget.videoElement.videoPath) != null || widget.message.status == MessageStatus.V2TIM_MSG_STATUS_SENDING)
-            ? VideoPlayerController.file(File(widget.videoElement.videoPath!))
-            : (TencentUtils.checkString(widget.videoElement.localVideoUrl) == null)
-                ? VideoPlayerController.networkUrl(
-                    Uri.parse(widget.videoElement.videoUrl!),
-                  )
-                : VideoPlayerController.file(File(
-                    widget.videoElement.localVideoUrl!,
-                  ));
-    await player.initialize();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      double w = getVideoWidth();
-      double h = getVideoHeight();
-      ChewieController controller = ChewieController(
-          videoPlayerController: player,
-          autoPlay: true,
-          looping: false,
-          showControlsOnInitialize: false,
-          allowPlaybackSpeedChanging: false,
-          aspectRatio: w == 0 || h == 0 ? null : w / h,
-          customControls: VideoCustomControls(downloadFn: () async {
-            return await _saveVideo();
-          }));
-      setState(() {
-        videoPlayerController = player;
-        chewieController = controller;
-        isInit = true;
-      });
-    });
-  }
-
-  @override
-  didUpdateWidget(oldWidget) {
-    if (oldWidget.videoElement.videoUrl != widget.videoElement.videoUrl || oldWidget.videoElement.videoPath != widget.videoElement.videoPath) {
-      setVideoPlayerController();
-    }
-    super.didUpdateWidget(oldWidget);
-  }
-
   @override
   void dispose() {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-    if (isInit) {
-      videoPlayerController.dispose();
-      chewieController.dispose();
-    }
     super.dispose();
   }
 
@@ -287,13 +230,15 @@ class _VideoScreenState extends TIMUIKitState<VideoScreen> {
   Widget tuiBuild(BuildContext context, TUIKitBuildValue value) {
     return OrientationBuilder(builder: ((context, orientation) {
       return Material(
-          color: Colors.transparent,
-          child: Container(
-            color: Colors.transparent,
-            constraints: BoxConstraints.expand(
-              height: MediaQuery.of(context).size.height,
-            ),
-            child: ExtendedImageSlidePage(
+        color: Colors.transparent,
+        child: Stack(
+          children: [
+            Container(
+              color: Colors.transparent,
+              constraints: BoxConstraints.expand(
+                height: MediaQuery.of(context).size.height,
+              ),
+              child: ExtendedImageSlidePage(
                 key: slidePagekey,
                 slidePageBackgroundHandler: (Offset offset, Size size) {
                   if (orientation == Orientation.landscape) {
@@ -316,27 +261,42 @@ class _VideoScreenState extends TIMUIKitState<VideoScreen> {
                   }
                   return null;
                 },
-                child: ExtendedImageSlidePageHandler(
-                  child: Container(
-                      color: Colors.black,
-                      child: isInit
-                          ? Chewie(
-                              controller: chewieController,
-                            )
-                          : const Center(child: CircularProgressIndicator(color: Colors.white))),
-                  heroBuilderForSlidingPage: (Widget result) {
-                    return Hero(
-                      tag: widget.heroTag,
-                      child: result,
-                      flightShuttleBuilder: (BuildContext flightContext, Animation<double> animation, HeroFlightDirection flightDirection, BuildContext fromHeroContext, BuildContext toHeroContext) {
-                        final Hero hero = (flightDirection == HeroFlightDirection.pop ? fromHeroContext.widget : toHeroContext.widget) as Hero;
-
-                        return hero.child;
-                      },
-                    );
-                  },
-                )),
-          ));
+                child: TIMUIKitVideoPlayer(
+                  message: widget.message,
+                  controller: true,
+                  isSending: widget.message.status == MessageStatus.V2TIM_MSG_STATUS_SENDING,
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 20,
+              left: 20,
+              child: IconButton(
+                icon: Image.asset(
+                  'images/close.png',
+                  package: 'tencent_cloud_chat_uikit',
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+            Positioned(
+              bottom: 20,
+              right: 20,
+              child: IconButton(
+                icon: Image.asset(
+                  'images/download.png',
+                  package: 'tencent_cloud_chat_uikit',
+                ),
+                onPressed: () async {
+                  await _saveVideo();
+                },
+              ),
+            ),
+          ],
+        ),
+      );
     }));
   }
 }
